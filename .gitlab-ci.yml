@@ -1,0 +1,46 @@
+stages:
+- Code_Check
+- test
+- deploy
+
+include:
+  - template: SAST.gitlab-ci.yml
+  - template: Dependency-Scanning.gitlab-ci.yml
+  - template: License-Scanning.gitlab-ci.yml
+  - template: Secret-Detection.gitlab-ci.yml
+
+license_scanning:
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
+
+.check:
+  stage: Code_Check
+  before_script:
+    - pip install -U pylint flake8 bandit black -r requirements.txt --quiet
+  script:
+    - pylint --rcfile tox.ini Bot.py log_maker.py ./cogs/
+    - flake8 CBot.py log_maker.py ./cogs/ --statistics --show-source
+    - bandit -r Bot.py log_maker.py ./cogs/
+    - black --check --line-length 100 .
+
+python-3.6:
+  extends: ".check"
+  image: python:3.6
+
+python-3.7:
+  extends: ".check"
+  image: python:3.7
+
+python-3.8:
+  extends: ".check"
+  image: python:3.8
+
+deploy_to_heroku:
+  image: ruby:2.7
+  stage: deploy
+  before_script:
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=champlain-staging-discord-bot --api-key=$HEROKU_API_KEY
+
