@@ -4,6 +4,7 @@ from discord.ext import commands
 
 class Admin(commands.Cog, name="Admin"):
     """Cogs for admin commands"""
+
     def __init__(self, bot):
         self.bot = bot
 

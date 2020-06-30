@@ -4,35 +4,12 @@ from discord.ext import commands
 import discord
 
 
-welcome_message = """Welcome to the Official Discord for:
-- **Association for Computing Machinery (ACM)**
-- **Champlain Cyber Security Club (CCSC)**
-- **Champlain College Digital Forensics Association (DFA)**
-- **Women in Technology Club (WiT)**
-
-This is a **student run discord**.
-All people who have roles of leadership are current students and people with moderator role former student/ex-leadership.
-While professors may be on here, they don’t control the discord and have limited access. While professors may be on here, they don’t control the discord and have limited access.Go to the #how-to-use channel to read how the server is set up and who has access to what.
-
-The **main rules** for the server are below. This is a chilled out environment so we don't ask much:
-*1) If you wouldn't say it in person to those on the other end, don't say it here.*
-*2) Treat everyone with respect.*
-*3) Don't be an asshole.*
-If there is something that makes you uncomfortable please bring it to the attention of our {mod_role} or {leader_role} -- **there is nothing too big or too small.** We are still a part of the Champlain community. 
-
-If {mod_role} or {leader_role} has an issue with your post or has gotten reports about your actions, there is a 3 strike policy:
-**Strike 1** - Warning message and a probable removable of offensive content
-**Strike 2** - 1 week suspension *(could be longer depending on the post and is at the discretion of {mod_role} & {leader_role})*
-**Strike 3** - Banned from the server indefinitely
-
-The focus of this discord is to create a computer focused community for Champlain students. Our fields overlap with many other fields including politics. Just remember to be courteous of others.
-
-Please response with `?accept` to get started
-"""
+welcome_message = open("rules.txt", "r").read()
 
 
 class RulesVerify(commands.Cog, name="Rules_Verify"):
     """Cogs for rules verifying"""
+
     def __init__(self, bot):
         self.bot = bot
         self.log = logging.getLogger("Champlain Discord")
@@ -63,9 +40,16 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         )
         await ctx.send(embed=embed)
 
-    @commands.command(name="refresh_message", hidden=True)
+    @commands.command(name="refresh_rules", hidden=True)
     async def refresh_message(self, _):
         """Refreshes the rules message"""
+        try:
+            old_message = await self.bot.rules_channel.fetch_message(
+                self.bot.latest_message_ids["last_rules"]
+            )
+            await old_message.delete()
+        except (commands.CommandInvokeError, AttributeError, discord.errors.NotFound) as e:
+            self.log.error(e)
         embed = discord.Embed(
             title="Welcome!",
             description=welcome_message[:-50].format(
@@ -74,6 +58,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         )
         new_message = await self.bot.rules_channel.send(embed=embed)
         await new_message.pin()
+        await self.bot.update_last_message("last_rules", new_message.id)
 
 
 def setup(bot):

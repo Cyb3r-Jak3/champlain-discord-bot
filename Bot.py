@@ -22,41 +22,55 @@ r = redis.from_url(redis_url)
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin"]
 
 
-def set_last_message_id(message: int) -> None:
+def total_ids() -> dict:
+    """Gets all the ids"""
+    return {
+        "last_reaction": get_message_id("last_reaction"),
+        "last_rules": get_message_id("last_rules"),
+    }
+
+
+def set_last_message_id(key: str, message: int) -> None:
     """
     Sets the message ID in redis cache
     Parameters
     ----------
-    message The message id of the last reaction message
+    message The message id of the key
 
     """
-    r.set("last_message", message)
+    r.set(key, message)
 
 
-def get_last_message_id() -> int:
+def get_message_id(key: str) -> int:
     """
     Returns the role reaction message from redis cache
     Returns
     -------
     int - ID of the last role_reaction_message
     """
-    return int(r.get("last_message").decode("utf-8"))
+    try:
+        return int(r.get(key).decode("utf-8"))
+    except AttributeError:
+        pass
 
 
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     def __init__(self):
         super().__init__(command_prefix="?", owner_id=OWNER_ID)
         self.uptime = datetime.utcnow()
-        self.latest_react_message = get_last_message_id()
-        self.guild = guild_id
-        self.rules_channel = channel_id
+        self.latest_message_ids = total_ids()
+        self.guild, self.rules_channel = "", ""
 
     async def on_ready(self):
         """
         When bot has connected to discord
         """
         log.info("Online")
-        log.debug(self.latest_react_message)
+        self.guild = self.get_guild(guild_id)
+        self.rules_channel = self.get_channel(channel_id)
+        log.debug(self.guild.name)
+        log.debug(self.rules_channel.name)
+        log.debug(self.latest_message_ids)
         await self.change_presence(
             activity=discord.Activity(name="?help", type=discord.ActivityType.playing)
         )
@@ -66,7 +80,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
             except commands.ExtensionError as e:
                 log.error("Failed to load extension {}. {}".format(extension, e))
 
-    async def update_last_message(self, message_id: int):
+    async def update_last_message(self, key: str, message_id: int):
         """
         Updates the last message id both in redis cache and for the bot.
         Parameters
@@ -74,8 +88,8 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         message_id The ID of the latest reaction message
 
         """
-        self.latest_react_message = message_id
-        set_last_message_id(message_id)
+        self.latest_message_ids[key] = message_id
+        set_last_message_id(key, message_id)
 
 
 bot = Discord_Bot()

@@ -2,7 +2,7 @@
 import logging
 from discord.ext import commands
 from discord.utils import get
-from discord import Embed, RawReactionActionEvent
+from discord import Embed, RawReactionActionEvent, errors
 
 reaction_role_message = """
 **React to get club specific notifications**
@@ -11,6 +11,7 @@ reaction_role_message = """
 
 class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     """Cogs for reaction roles"""
+
     def __init__(self, bot):
         self.bot = bot
         self.log = logging.getLogger("Champlain Discord")
@@ -18,18 +19,20 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     @commands.command(name="refresh_reaction", hidden=True)
     async def refresh_reaction_message(self, _):
         """
-        Command that generates a new role reaction message and updates it in redis cach
+        Command that generates a new role reaction message and updates it in redis cache
 
         """
         try:
-            old_message = await self.bot.rules_channel.fetch_message(self.bot.latest_react_message)
+            old_message = await self.bot.rules_channel.fetch_message(
+                self.bot.latest_message_ids["last_reaction"]
+            )
             await old_message.delete()
-        except (commands.CommandInvokeError, AttributeError) as e:
-            print(e)
+        except (commands.CommandInvokeError, AttributeError, errors.NotFound) as e:
+            self.log.error(e)
         embed = Embed(title="React for Notifications", description=reaction_role_message,)
         new_message = await self.bot.rules_channel.send(embed=embed)
         await new_message.pin()
-        await self.bot.update_last_message(new_message.id)
+        await self.bot.update_last_message("last_reaction", new_message.id)
         for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣"]:
             await new_message.add_reaction(reaction)
 
@@ -43,7 +46,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
 
         """
         user = self.bot.guild.get_member(payload.user_id)
-        if payload.message_id != self.bot.latest_react_message or user.bot:
+        if payload.message_id != self.bot.latest_message_ids["last_reaction"] or user.bot:
             return
         emoji = str(payload.emoji)
         if emoji == "1️⃣":
@@ -71,7 +74,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         payload Discord.Payload of the raw event
         """
         user = self.bot.guild.get_member(payload.user_id)
-        if payload.message_id != self.bot.latest_react_message or user.bot:
+        if payload.message_id != self.bot.latest_message_ids["last_reaction"] or user.bot:
             return
         emoji = str(payload.emoji)
         if emoji == "1️⃣":
