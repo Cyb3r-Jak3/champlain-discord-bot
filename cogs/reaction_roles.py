@@ -6,7 +6,7 @@ from discord import Embed, RawReactionActionEvent, errors
 
 reaction_role_message = """
 **React to get club specific notifications**
-:one: for ACM, :two: for CCSC, :three: for DFA, :four: for WiT"""
+:one: for ACM, :two: for CCSC, :three: for DFA, :four: for WiT :five: for NECCDC Interest"""
 
 
 class ReactionRoles(commands.Cog, name="Reaction_Roles"):
@@ -33,7 +33,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         new_message = await self.bot.rules_channel.send(embed=embed)
         await new_message.pin()
         await self.bot.update_last_message("last_reaction", new_message.id)
-        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣"]:
+        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
             await new_message.add_reaction(reaction)
 
     @commands.Cog.listener()
@@ -61,6 +61,9 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         elif emoji == "4️⃣":
             self.log.debug("Adding WIT to {}".format(user.name))
             role = get(self.bot.guild.roles, name="wit-general")
+        elif emoji == "5️⃣":
+            self.log.debug("Adding NECCDC to {}".format(user.name))
+            role = get(self.bot.guild.roles, name="neccdc-interest")
         else:
             return
         await user.add_roles(role)
@@ -89,6 +92,9 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         elif emoji == "4️⃣":
             self.log.debug("Removing WIT from {}".format(user.name))
             role = get(self.bot.guild.roles, name="wit-general")
+        elif emoji == "5️⃣":
+            self.log.debug("Removing NECCDC to {}".format(user.name))
+            role = get(self.bot.guild.roles, name="neccdc-interest")
         else:
             return
         await user.remove_roles(role)
