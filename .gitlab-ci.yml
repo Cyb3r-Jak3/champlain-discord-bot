@@ -42,5 +42,5 @@ deploy_to_heroku:
   before_script:
     - gem install dpl
   script:
-    - dpl --provider=heroku --app=champlain-staging-discord-bot --api-key=$HEROKU_API_KEY
+    - dpl --provider=heroku --app=$APP_NAME --api-key=$HEROKU_API_KEY
 

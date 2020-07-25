@@ -1,10 +1,13 @@
 """Cog for rule verification"""
 import logging
+import os
 from discord.ext import commands
 import discord
 
 
 welcome_message = open("rules.txt", "r").read()
+mod_role = os.environ["mod_role"]
+leader_role = os.environ["leader_role"]
 
 
 class RulesVerify(commands.Cog, name="Rules_Verify"):
@@ -18,9 +21,10 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     async def on_member_join(self, member: discord.Member):
         """Sends user the rules when they join"""
         self.log.debug("User: {} joined".format(member.name))
+        formatted_message = welcome_message.format(mod_role="@Moderator", leader_role="@Leadership")
         embed = discord.Embed(
             title="Welcome:",
-            description=welcome_message.format(mod_role="@Moderator", leader_role="@Leadership"),
+            description=formatted_message + "\nPlease response with `?accept` to get started.",
             timestamp=member.joined_at,
         )
         await member.send(embed=embed)
@@ -41,8 +45,10 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         await ctx.send(embed=embed)
 
     @commands.command(name="refresh_rules", hidden=True)
-    async def refresh_message(self, _):
+    @commands.has_role("Moderator")
+    async def refresh_message(self, ctx: commands.Context):
         """Refreshes the rules message"""
+        await ctx.message.delete()
         try:
             old_message = await self.bot.rules_channel.fetch_message(
                 self.bot.latest_message_ids["last_rules"]
@@ -52,9 +58,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
             self.log.error(e)
         embed = discord.Embed(
             title="Welcome!",
-            description=welcome_message[:-50].format(
-                mod_role="<@&716775554757689367>", leader_role="<@&716775554757689368>"
-            ),
+            description=welcome_message.format(mod_role=mod_role, leader_role=leader_role),
         )
         new_message = await self.bot.rules_channel.send(embed=embed)
         await new_message.pin()

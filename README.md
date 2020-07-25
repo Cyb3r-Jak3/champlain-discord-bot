@@ -4,3 +4,5 @@
 ---
 
 Simple bot that does reaction roles and rule reading verification.
+
+[![pipeline status](https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot/badges/master/pipeline.svg)](https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot/-/commits/master)

@@ -24,4 +24,3 @@ The focus of this discord is to create a computer focused community for Champlai
 
 To get started, change your nickname to your real first and last name for verification purposes.
 Then, post in the #role-requests channel along with the role that matches who you are (Student, Alumni, or Professor)
-Please response with `?accept` to get started.
