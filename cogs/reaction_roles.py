@@ -18,7 +18,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
 
     @commands.command(name="refresh_reaction", hidden=True)
     @commands.has_role("Moderator")
-    async def refresh_reaction_message(self, ctx: commands.Context()):
+    async def refresh_reaction_message(self, ctx: commands.Context):
         """
         Command that generates a new role reaction message and updates it in redis cache
 

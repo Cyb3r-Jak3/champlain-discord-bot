@@ -17,7 +17,7 @@ license_scanning:
 .check:
   stage: Code_Check
   before_script:
-    - pip install -U pylint flake8 bandit black -r requirements.txt --quiet
+    - pip install -U pip pylint flake8 bandit black -r requirements.txt --quiet
   script:
     - pylint --rcfile tox.ini Bot.py log_maker.py ./cogs/
     - flake8 Bot.py log_maker.py ./cogs/ --statistics --show-source
