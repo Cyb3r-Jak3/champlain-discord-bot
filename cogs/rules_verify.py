@@ -5,7 +5,9 @@ from discord.ext import commands
 import discord
 
 
-welcome_message = open("rules.txt", "r").read()
+with open("rules.txt", "r") as f:
+    welcome_message = f.read()
+
 mod_role = os.environ["mod_role"]
 leader_role = os.environ["leader_role"]
 
@@ -22,12 +24,8 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         """Sends user the rules when they join"""
         self.log.debug("User: {} joined".format(member.name))
         formatted_message = welcome_message.format(mod_role="@Moderator", leader_role="@Leadership")
-        embed = discord.Embed(
-            title="Welcome:",
-            description=formatted_message + "\nPlease response with `?accept` to get started.",
-            timestamp=member.joined_at,
-        )
-        await member.send(embed=embed)
+        formatted_message += "\nPlease response with `?accept` to get started."
+        await member.send(formatted_message)
 
     @commands.command(name="accept", hidden=True)
     @commands.dm_only()
@@ -56,11 +54,9 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
             await old_message.delete()
         except (commands.CommandInvokeError, AttributeError, discord.errors.NotFound) as e:
             self.log.error(e)
-        embed = discord.Embed(
-            title="Welcome!",
-            description=welcome_message.format(mod_role=mod_role, leader_role=leader_role),
+        new_message = await self.bot.rules_channel.send(
+            welcome_message.format(mod_role=mod_role, leader_role=leader_role)
         )
-        new_message = await self.bot.rules_channel.send(embed=embed)
         await new_message.pin()
         await self.bot.update_last_message("last_rules", new_message.id)
 

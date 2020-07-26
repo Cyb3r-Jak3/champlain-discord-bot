@@ -12,14 +12,13 @@ OWNER_ID = os.environ["OWNER_ID"]
 redis_url = os.environ["REDIS_URL"]
 guild_id = int(os.environ["GUILD_ID"])
 channel_id = int(os.environ["CHANNEL_ID"])
-log_level = os.getenv("LOG_LEVEL")
-if not log_level:
-    log_level = "INFO"
-
+log_level = os.getenv("LOG_LEVEL", "INFO")
 
 log = log_maker.make_logger("Champlain Discord", log_level)
 r = redis.from_url(redis_url)
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin"]
+description = "Champlain Discord bot. Does rule verification and reaction roles.\n" \
+               "Source: https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot"
 
 
 def total_ids() -> dict:
@@ -60,6 +59,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
         self.guild, self.rules_channel = "", ""
+        self.description=description
 
     async def on_ready(self):
         """
@@ -68,9 +68,6 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         log.info("Online")
         self.guild = self.get_guild(guild_id)
         self.rules_channel = self.get_channel(channel_id)
-        log.debug(self.guild.name)
-        log.debug(self.rules_channel.name)
-        log.debug(self.latest_message_ids)
         await self.change_presence(
             activity=discord.Activity(name="?help", type=discord.ActivityType.playing)
         )

@@ -2,7 +2,7 @@
 import logging
 from discord.ext import commands
 from discord.utils import get
-from discord import Embed, RawReactionActionEvent, errors
+from discord import RawReactionActionEvent, errors
 
 reaction_role_message = """
 **React to get club specific notifications**
@@ -16,7 +16,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         self.bot = bot
         self.log = logging.getLogger("Champlain Discord")
 
-    @commands.command(name="refresh_reaction", hidden=True)
+    @commands.command(name="refresh_reactions", hidden=True)
     @commands.has_role("Moderator")
     async def refresh_reaction_message(self, ctx: commands.Context):
         """
@@ -31,8 +31,9 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             await old_message.delete()
         except (commands.CommandInvokeError, AttributeError, errors.NotFound) as e:
             self.log.error(e)
-        embed = Embed(title="React for Notifications", description=reaction_role_message,)
-        new_message = await self.bot.rules_channel.send(embed=embed)
+        new_message = await self.bot.rules_channel.send(
+            reaction_role_message
+        )
         await new_message.pin()
         await self.bot.update_last_message("last_reaction", new_message.id)
         for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
