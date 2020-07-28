@@ -9,16 +9,17 @@ import log_maker
 TOKEN = os.environ["DISCORD_TOKEN"]
 OWNER_NAME = os.environ["OWNER_NAME"]
 OWNER_ID = os.environ["OWNER_ID"]
-redis_url = os.environ["REDIS_URL"]
 guild_id = int(os.environ["GUILD_ID"])
 channel_id = int(os.environ["CHANNEL_ID"])
 log_level = os.getenv("LOG_LEVEL", "INFO")
 
 log = log_maker.make_logger("Champlain Discord", log_level)
-r = redis.from_url(redis_url)
+r = redis.from_url(os.environ["REDIS_URL"])
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin"]
-description = "Champlain Discord bot. Does rule verification and reaction roles.\n" \
-               "Source: https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot"
+description = (
+    "Champlain Discord bot. Does rule verification and reaction roles.\n"
+    "Source: https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot"
+)
 
 
 def total_ids() -> dict:
@@ -59,7 +60,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
         self.guild, self.rules_channel = "", ""
-        self.description=description
+        self.description = description
 
     async def on_ready(self):
         """

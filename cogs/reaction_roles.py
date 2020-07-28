@@ -31,9 +31,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             await old_message.delete()
         except (commands.CommandInvokeError, AttributeError, errors.NotFound) as e:
             self.log.error(e)
-        new_message = await self.bot.rules_channel.send(
-            reaction_role_message
-        )
+        new_message = await self.bot.rules_channel.send(reaction_role_message)
         await new_message.pin()
         await self.bot.update_last_message("last_reaction", new_message.id)
         for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
