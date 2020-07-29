@@ -19,7 +19,7 @@ license_scanning:
   before_script:
     - pip install -U pip pylint flake8 bandit black -r requirements.txt --quiet
   script:
-    - pylint --rcfile tox.ini Bot.py log_maker.py ./cogs/
+    - pylint Bot.py log_maker.py ./cogs/
     - flake8 Bot.py log_maker.py ./cogs/ --statistics --show-source
     - bandit -r Bot.py log_maker.py ./cogs/
     - black --check --line-length 100 .
