@@ -1,5 +1,5 @@
 stages:
-- Code_Check
+- lint
 - test
 - deploy
 
@@ -10,12 +10,13 @@ include:
   - template: Secret-Detection.gitlab-ci.yml
 
 license_scanning:
+  stage: test
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: always
 
 .check:
-  stage: Code_Check
+  stage: lint
   before_script:
     - pip install -U pip pylint flake8 bandit black -r requirements.txt --quiet
   script:
