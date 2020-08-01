@@ -24,7 +24,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         """Sends user the rules when they join"""
         self.log.debug("User: {} joined".format(member.name))
         formatted_message = welcome_message.format(mod_role="@Moderator", leader_role="@Leadership")
-        formatted_message += "\nPlease response with `?accept` to get started."
+        formatted_message += "\n**Please response with `?accept` to get started.**"
         await member.send(formatted_message)
 
     @commands.command(name="accept", hidden=True)
