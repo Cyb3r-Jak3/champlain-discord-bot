@@ -10,6 +10,9 @@ with open("rules.txt", "r") as f:
 
 mod_role = os.environ["mod_role"]
 leader_role = os.environ["leader_role"]
+student_role = os.environ["student_role"]
+alumni_role = os.environ["alumni_role"]
+professor_role = os.environ["professor"]
 
 
 class RulesVerify(commands.Cog, name="Rules_Verify"):
@@ -23,7 +26,13 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     async def on_member_join(self, member: discord.Member):
         """Sends user the rules when they join"""
         self.log.debug("User: {} joined".format(member.name))
-        formatted_message = welcome_message.format(mod_role="@Moderator", leader_role="@Leadership")
+        formatted_message = welcome_message.format(
+            mod_role="@Moderator",
+            leader_role="@Leadership",
+            student_role="@Student",
+            alumni_role="@Alumni",
+            professor_role="@Professor",
+        )
         formatted_message += "\n**Please response with `?accept` to get started.**"
         await member.send(formatted_message)
 
@@ -60,7 +69,13 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         ) as err:
             self.log.error(err)
         new_message = await self.bot.rules_channel.send(
-            welcome_message.format(mod_role=mod_role, leader_role=leader_role)
+            welcome_message.format(
+                mod_role=mod_role,
+                leader_role=leader_role,
+                student_role=student_role,
+                alumni_role=alumni_role,
+                professor_role=professor_role,
+            )
         )
         await new_message.pin()
         await self.bot.update_last_message("last_rules", new_message.id)
