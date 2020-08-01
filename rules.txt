@@ -1,26 +1,24 @@
 **Welcome to the Official Discord for**:
 - Association for Computing Machinery (ACM)
-- Champlain College Digital Forensics Association (DFA)
 - Champlain Cyber Security Club (CCSC)
+- Champlain College Digital Forensics Association (DFA)
 - Women in Technology Club (WiT)
 
-This is a student-run Discord. All people who have the roles of moderator and/or leadership are students or former students. While professors may be on here, they don’t control the discord and have limited access. Go to the #how-to-use channel to read how the server is set up and who has access to what.
+This is a student-run Discord. The focus of this Discord is to create a computer focused community for Champlain students. All people who have the roles of {mod_role} and/or {leader_role} are students or former students. While professors may be on here, they don’t control the discord and have limited access. Go to the #how-to-use channel to read how the server is set up and who has access to what.
 
 The main rules for the server are below. This is a chilled-out environment so we don't ask much:
 1) If you wouldn't say it in person, don't say it here.
 2) Treat everyone with respect.
 3) Don't be an asshole.
 Hate speech such as (but not limited to) sexist, racist, homophobic, transphobic, etc. comments will not be tolerated in this server in any channel.
-If there is something that makes you uncomfortable please bring it to the attention of our {mod_role} or {leader_role} -- there is nothing too big or too small. We are still a part of the Champlain community.
+If there is something that makes you uncomfortable please bring it to the attention of our {mod_role} or {leader_role} -- there is nothing too big or too small. We are still a part of the Champlain community. Just remember to be courteous of others.
 
-If {mod_role} or {leader_role} has an issue with your post or has gotten reports about your post, there is a 3 strike policy:
+If the leadership team has an issue with your post or has gotten reports about your post, there is a 3 strike policy:
 Strike 1 - Warning message and a probable deletion on the post
 Strike 2 - 1 week suspension (could be longer depending on the post and is at the discretion of our leadership team)
 Strike 3 - Banned from the server indefinitely
 
-The focus of this discord is to create a computer focused community for Champlain students. Our fields overlap with many other fields including politics. Just remember to be courteous of others.
-
 **To get started**:
 1) Accept the rules by replying `?accept` to the Champlain-Management-Bot (check your DMs)
 2) Change your nickname to your real first and last name for verification purposes
-3) Cost in the #role-requests with the role that matches your status ({student_role}, {alumni_role}, or {professor_role})
+3) Post in the #role-requests with the role that matches your status ({student_role}, {alumni_role}, or {professor_role})
