@@ -52,8 +52,13 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
                 self.bot.latest_message_ids["last_rules"]
             )
             await old_message.delete()
-        except (commands.CommandInvokeError, AttributeError, discord.errors.NotFound) as e:
-            self.log.error(e)
+        except (
+            commands.CommandInvokeError,
+            AttributeError,
+            discord.errors.NotFound,
+            discord.errors.HTTPException,
+        ) as err:
+            self.log.error(err)
         new_message = await self.bot.rules_channel.send(
             welcome_message.format(mod_role=mod_role, leader_role=leader_role)
         )
