@@ -21,6 +21,6 @@ Strike 3 - Banned from the server indefinitely
 The focus of this discord is to create a computer focused community for Champlain students. Our fields overlap with many other fields including politics. Just remember to be courteous of others.
 
 **To get started**:
-1) Accept the rules by replying `?accept` to the Champlain-Management-Bot (check your Discord DMs)
-2) change your nickname to your real first and last name for verification purposes
-3) post in the #role-requests channel along with the role that matches who you are ({student_role}, {alumni_role}, or {professor_role})
+1) Accept the rules by replying `?accept` to the Champlain-Management-Bot (check your DMs)
+2) Change your nickname to your real first and last name for verification purposes
+3) Cost in the #role-requests with the role that matches your status ({student_role}, {alumni_role}, or {professor_role})

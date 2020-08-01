@@ -26,6 +26,17 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     async def on_member_join(self, member: discord.Member):
         """Sends user the rules when they join"""
         self.log.debug("User: {} joined".format(member.name))
+        self.log.debug(
+            len(
+                welcome_message.format(
+                    mod_role="@Moderator",
+                    leader_role="@Leadership",
+                    student_role="@Student",
+                    alumni_role="@Alumni",
+                    professor_role="@Professor",
+                )
+            )
+        )
         await member.send(
             welcome_message.format(
                 mod_role="@Moderator",
@@ -68,6 +79,17 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
             discord.errors.HTTPException,
         ) as err:
             self.log.error(err)
+        self.log.debug(
+            len(
+                welcome_message.format(
+                    mod_role=mod_role,
+                    leader_role=leader_role,
+                    student_role=student_role,
+                    alumni_role=alumni_role,
+                    professor_role=professor_role,
+                )
+            )
+        )
         new_message = await self.bot.rules_channel.send(
             welcome_message.format(
                 mod_role=mod_role,
