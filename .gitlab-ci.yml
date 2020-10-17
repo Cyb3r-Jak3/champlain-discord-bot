@@ -15,27 +15,22 @@ license_scanning:
     - if: '$CI_COMMIT_BRANCH == "master"'
       when: always
 
-.check:
+Lint_and_Check:
   stage: lint
+  image: python:3.8-slim
   before_script:
-    - pip install -U pip pylint flake8 bandit black -r requirements.txt --quiet
+    - pip install -U pip -r requirements-dev.txt --quiet
   script:
     - pylint Bot.py log_maker.py ./cogs/
-    - flake8 Bot.py log_maker.py ./cogs/ --statistics --show-source
+    - flake8 Bot.py log_maker.py ./cogs/ --statistics --show-source --count
     - bandit -r Bot.py log_maker.py ./cogs/
     - black --check --line-length 100 .
-
-python-3.6:
-  extends: ".check"
-  image: python:3.6
-
-python-3.7:
-  extends: ".check"
-  image: python:3.7
-
-python-3.8:
-  extends: ".check"
-  image: python:3.8
+  variables:
+    PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+  cache:
+    paths:
+      - .cache/pip
+      - venv/
 
 deploy_to_heroku:
   image: ruby:2.7
@@ -44,4 +39,7 @@ deploy_to_heroku:
     - gem install dpl
   script:
     - dpl --provider=heroku --app=$APP_NAME --api-key=$HEROKU_API_KEY
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+      when: always
 

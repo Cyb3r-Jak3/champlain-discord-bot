@@ -16,6 +16,8 @@ log_level = os.getenv("LOG_LEVEL", "INFO")
 log = log_maker.make_logger("Champlain Discord", log_level)
 r = redis.from_url(os.environ["REDIS_URL"])
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin"]
+intents = discord.Intents.default()
+intents.members = True
 description = (
     "Champlain Discord bot. Does rule verification and reaction roles.\n"
     "Source: https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot"
@@ -56,7 +58,7 @@ def get_message_id(key: str) -> int:
 
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     def __init__(self):
-        super().__init__(command_prefix="?", owner_id=OWNER_ID)
+        super().__init__(command_prefix="?", owner_id=OWNER_ID, intents=intents)
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
         self.guild, self.rules_channel = "", ""
