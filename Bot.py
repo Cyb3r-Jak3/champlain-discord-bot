@@ -65,9 +65,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         self.description = description
 
     async def on_ready(self):
-        """
-        When bot has connected to discord
-        """
+        """When bot has connected to Discord"""
         log.info("Online")
         self.guild = self.get_guild(guild_id)
         self.rules_channel = self.get_channel(channel_id)

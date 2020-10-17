@@ -19,10 +19,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     @commands.command(name="refresh_reactions", hidden=True)
     @commands.has_role("Moderator")
     async def refresh_reaction_message(self, ctx: commands.Context):
-        """
-        Command that generates a new role reaction message and updates it in redis cache
-
-        """
+        """Command that generates a new role reaction message and updates it in redis cache"""
         await ctx.message.delete()
         try:
             old_message = await self.bot.rules_channel.fetch_message(

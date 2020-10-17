@@ -11,8 +11,8 @@ def make_logger(name: str, log_level: str) -> logging.Logger:
     Arguments:
     ---
         name {str} -- Name of the logger
-        log_level {str} -- The logging level. Valid strings are 'DEBUG', 'INFO', 'WARNING',
-            'ERROR', 'CRITICAL'
+        log_level {str} -- The logging level. Valid strings are
+            'DEBUG', 'INFO', 'WARNING', 'ERROR', 'CRITICAL'
 
     Returns:
     ---
