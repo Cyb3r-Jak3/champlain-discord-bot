@@ -5,14 +5,19 @@ from discord.ext import commands
 import discord
 
 
-with open("rules.txt", "r") as f:
-    welcome_message = f.read()
+with open("text/rules.txt", "r") as f:
+    rules = f.read()
+
+with open("text/getting_started.txt", "r") as f:
+    getting_started = f.read()
 
 mod_role = os.environ["mod_role"]
 leader_role = os.environ["leader_role"]
 student_role = os.environ["student_role"]
 alumni_role = os.environ["alumni_role"]
 professor_role = os.environ["professor_role"]
+homework = os.environ["homework_channel"]
+troubleshooting = os.environ["troubleshooting_channel"]
 
 
 class RulesVerify(commands.Cog, name="Rules_Verify"):
@@ -26,21 +31,16 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     async def on_member_join(self, member: discord.Member):
         """Sends user the rules when they join"""
         self.log.debug("User: {} joined".format(member.name))
-        self.log.debug(
-            len(
-                welcome_message.format(
-                    mod_role="@Moderator",
-                    leader_role="@Leadership",
-                    student_role="@Student",
-                    alumni_role="@Alumni",
-                    professor_role="@Professor",
-                )
+        await member.send(
+            rules.format(
+                mod_role="@Moderator",
+                leader_role="@Leadership",
+                homework_channel="#homework-help",
+                troubleshooting_channel="#troubleshooting",
             )
         )
         await member.send(
-            welcome_message.format(
-                mod_role="@Moderator",
-                leader_role="@Leadership",
+            getting_started.format(
                 student_role="@Student",
                 alumni_role="@Alumni",
                 professor_role="@Professor",
@@ -62,16 +62,21 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         )
         await ctx.send(embed=embed)
 
-    @commands.command(name="refresh_rules", hidden=True)
+    @commands.command(name="refresh-rules", hidden=True)
     @commands.has_role("Moderator")
-    async def refresh_message(self, ctx: commands.Context):
+    async def refresh_message(self, ctx: commands.Context, delete=True):
         """Refreshes the rules message"""
-        await ctx.message.delete()
+        if delete:
+            await ctx.message.delete()
         try:
-            old_message = await self.bot.rules_channel.fetch_message(
+            old_rules = await self.bot.rules_channel.fetch_message(
                 self.bot.latest_message_ids["last_rules"]
             )
-            await old_message.delete()
+            old_started = await self.bot.rules_channel.fetch_message(
+                self.bot.latest_message_ids["last_started"]
+            )
+            await old_started.delete()
+            await old_rules.delete()
         except (
             commands.CommandInvokeError,
             AttributeError,
@@ -79,28 +84,25 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
             discord.errors.HTTPException,
         ) as err:
             self.log.error(err)
-        self.log.debug(
-            len(
-                welcome_message.format(
-                    mod_role=mod_role,
-                    leader_role=leader_role,
-                    student_role=student_role,
-                    alumni_role=alumni_role,
-                    professor_role=professor_role,
-                )
-            )
-        )
         new_message = await self.bot.rules_channel.send(
-            welcome_message.format(
+            rules.format(
                 mod_role=mod_role,
                 leader_role=leader_role,
+                homework_channel=homework,
+                troubleshooting_channel=troubleshooting,
+            )
+        )
+        new_started = await self.bot.rules_channel.send(
+            getting_started.format(
                 student_role=student_role,
                 alumni_role=alumni_role,
                 professor_role=professor_role,
             )
         )
         await new_message.pin()
+        await new_started.pin()
         await self.bot.update_last_message("last_rules", new_message.id)
+        await self.bot.update_last_message("last_started", new_started.id)
 
 
 def setup(bot):
