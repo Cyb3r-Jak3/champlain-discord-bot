@@ -16,11 +16,12 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         self.bot = bot
         self.log = logging.getLogger("Champlain Discord")
 
-    @commands.command(name="refresh_reactions", hidden=True)
+    @commands.command(name="refresh-reactions", hidden=True)
     @commands.has_role("Moderator")
-    async def refresh_reaction_message(self, ctx: commands.Context):
+    async def refresh_reaction_message(self, ctx: commands.Context, delete=True):
         """Command that generates a new role reaction message and updates it in redis cache"""
-        await ctx.message.delete()
+        if delete:
+            await ctx.message.delete()
         try:
             old_message = await self.bot.rules_channel.fetch_message(
                 self.bot.latest_message_ids["last_reaction"]

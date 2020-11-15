@@ -13,12 +13,9 @@ The main rules for the server are below. This is a chilled-out environment so we
 Hate speech such as (but not limited to) sexist, racist, homophobic, transphobic, etc. comments will not be tolerated in this server in any channel.
 If there is something that makes you uncomfortable please bring it to the attention of our {mod_role} or {leader_role} -- there is nothing too big or too small. We are still a part of the Champlain community. Just remember to be courteous of others.
 
+When asking for help in {homework_channel} and {troubleshooting_channel}, please just ask your question. Don't ask to ask. Don't ask for topic experts or DMs. Don't ping random users. Skip the formalities and ask away!
+
 If the leadership team has an issue with your post or has gotten reports about your post, there is a 3 strike policy:
 Strike 1 - Warning message and a probable deletion on the post
 Strike 2 - 1 week suspension (could be longer depending on the post and is at the discretion of our leadership team)
 Strike 3 - Banned from the server indefinitely
-
-**To get started**:
-1) Accept the rules by replying `?accept` to the Champlain-Management-Bot (check your DMs)
-2) Change your nickname to your real first and last name for verification purposes
-3) Post in the #role-requests with the role that matches your status ({student_role}, {alumni_role}, or {professor_role})

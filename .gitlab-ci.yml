@@ -25,7 +25,6 @@ Lint_and_Check:
     - flake8 Bot.py log_maker.py ./cogs/ --statistics --show-source --count
     - bandit -r Bot.py log_maker.py ./cogs/
     - black --check --line-length 100 .
-    - echo
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:

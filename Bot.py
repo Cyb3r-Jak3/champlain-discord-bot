@@ -29,6 +29,7 @@ def total_ids() -> dict:
     return {
         "last_reaction": get_message_id("last_reaction"),
         "last_rules": get_message_id("last_rules"),
+        "last_started": get_message_id("last_started"),
     }
 
 
