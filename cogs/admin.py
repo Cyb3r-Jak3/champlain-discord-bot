@@ -30,8 +30,8 @@ class Admin(commands.Cog, name="Admin"):
     @commands.command(name="refresh-all", help="Refreshes both reactions and rules")
     @commands.has_role("Moderator")
     async def refresh_all(self, ctx: commands.Context):
-        """refresh_all
-        refreshs both the rules and reaction message
+        """Refresh_all
+        refreshes both the rules and reaction message
         Parameters
         ----------
             ctx {discord.ext.commands.Context} -- Context of the command.
@@ -42,7 +42,7 @@ class Admin(commands.Cog, name="Admin"):
 
     @commands.command(name="uptime", help="Gets uptime of bot")
     async def uptime(self, ctx: commands.Context):
-        """uptime
+        """Uptime
         ---
         Arguments:
         ---

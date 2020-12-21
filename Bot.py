@@ -15,7 +15,7 @@ log_level = os.getenv("LOG_LEVEL", "INFO")
 
 log = log_maker.make_logger("Champlain Discord", log_level)
 r = redis.from_url(os.environ["REDIS_URL"])
-initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin"]
+initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin", "cogs.graduation"]
 intents = discord.Intents.default()
 intents.members = True
 description = (
@@ -27,13 +27,14 @@ description = (
 def total_ids() -> dict:
     """Gets all the ids"""
     return {
-        "last_reaction": get_message_id("last_reaction"),
-        "last_rules": get_message_id("last_rules"),
-        "last_started": get_message_id("last_started"),
+        "last_reaction": _get_message_id("last_reaction"),
+        "last_rules": _get_message_id("last_rules"),
+        "last_started": _get_message_id("last_started"),
+        "last_graduation": _get_message_id("last_graduation"),
     }
 
 
-def set_last_message_id(key: str, message: int) -> None:
+def _set_last_message_id(key: str, message: int) -> None:
     """
     Sets the message ID in redis cache
     Parameters
@@ -44,7 +45,7 @@ def set_last_message_id(key: str, message: int) -> None:
     r.set(key, message)
 
 
-def get_message_id(key: str) -> int:
+def _get_message_id(key: str) -> int:
     """
     Returns the role reaction message from redis cache
     Returns
@@ -88,7 +89,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
 
         """
         self.latest_message_ids[key] = message_id
-        set_last_message_id(key, message_id)
+        _set_last_message_id(key, message_id)
 
 
 bot = Discord_Bot()
