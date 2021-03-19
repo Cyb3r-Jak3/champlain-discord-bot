@@ -6,7 +6,8 @@ from discord import RawReactionActionEvent, errors
 
 reaction_role_message = """
 **React to get club specific notifications**
-:one: for ACM, :two: for CCSC, :three: for DFA, :four: for WiT :five: for NECCDC Interest"""
+:one: for ACM, :two: for CCSC, :three: for DFA, :four: for WiT :five: for NECCDC Interest
+:six: for Math Club"""
 
 
 class ReactionRoles(commands.Cog, name="Reaction_Roles"):
@@ -15,6 +16,36 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     def __init__(self, bot):
         self.bot = bot
         self.log = logging.getLogger("Champlain Discord")
+
+    async def role_action(self, payload: RawReactionActionEvent, action: str) -> None:
+        """Performs a role action (add or remove) on a user"""
+        user = self.bot.guild.get_member(payload.user_id)
+        if payload.message_id != self.bot.latest_message_ids["last_reaction"] or user.bot:
+            return
+        emoji = str(payload.emoji)
+        if emoji == "1️⃣":
+            role = get(self.bot.guild.roles, name="acm-general")
+        elif emoji == "2️⃣":
+            role = get(self.bot.guild.roles, name="ccsc-general")
+        elif emoji == "3️⃣":
+            role = get(self.bot.guild.roles, name="dfa-general")
+        elif emoji == "4️⃣":
+            role = get(self.bot.guild.roles, name="wit-general")
+        elif emoji == "5️⃣":
+            role = get(self.bot.guild.roles, name="neccdc-interest")
+        elif emoji == "6️⃣":
+            role = get(self.bot.guild.roles, name="math-club-general")
+        else:
+            return
+        if action == "add":
+            self.log.debug("Adding {} to {}".format(role.name, user.name))
+            await user.add_roles(role)
+        elif action == "remove":
+            self.log.debug("Removing {} from {}".format(role.name, user.name))
+            await user.remove_roles(role)
+        else:
+            raise NotImplementedError
+        return
 
     @commands.command(name="refresh-reactions", hidden=True)
     @commands.has_role("Moderator")
@@ -35,9 +66,11 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         ) as err:
             self.log.error(err)
         new_message = await self.bot.rules_channel.send(reaction_role_message)
-        await new_message.pin()
+        await new_message.pin(
+            reason=f"Newest reaction role message triggered by {ctx.author.display_name}"
+        )
         await self.bot.update_last_message("last_reaction", new_message.id)
-        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣"]:
+        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"]:
             await new_message.add_reaction(reaction)
 
     @commands.Cog.listener()
@@ -49,28 +82,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         payload Discord.Payload of the raw event
 
         """
-        user = self.bot.guild.get_member(payload.user_id)
-        if payload.message_id != self.bot.latest_message_ids["last_reaction"] or user.bot:
-            return
-        emoji = str(payload.emoji)
-        if emoji == "1️⃣":
-            self.log.debug("Adding ACM to {}".format(user.name))
-            role = get(self.bot.guild.roles, name="acm-general")
-        elif emoji == "2️⃣":
-            self.log.debug("Adding CCSC to {}".format(user.name))
-            role = get(self.bot.guild.roles, name="ccsc-general")
-        elif emoji == "3️⃣":
-            self.log.debug("Adding DFA to {}".format(user.name))
-            role = get(self.bot.guild.roles, name="dfa-general")
-        elif emoji == "4️⃣":
-            self.log.debug("Adding WIT to {}".format(user.name))
-            role = get(self.bot.guild.roles, name="wit-general")
-        elif emoji == "5️⃣":
-            self.log.debug("Adding NECCDC to {}".format(user.name))
-            role = get(self.bot.guild.roles, name="neccdc-interest")
-        else:
-            return
-        await user.add_roles(role)
+        return await self.role_action(payload, "add")
 
     @commands.Cog.listener()
     async def on_raw_reaction_remove(self, payload: RawReactionActionEvent):
@@ -80,28 +92,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         ----------
         payload Discord.Payload of the raw event
         """
-        user = self.bot.guild.get_member(payload.user_id)
-        if payload.message_id != self.bot.latest_message_ids["last_reaction"] or user.bot:
-            return
-        emoji = str(payload.emoji)
-        if emoji == "1️⃣":
-            self.log.debug("Removing ACM from {}".format(user.name))
-            role = get(self.bot.guild.roles, name="acm-general")
-        elif emoji == "2️⃣":
-            self.log.debug("Removing CCSC from {}".format(user.name))
-            role = get(self.bot.guild.roles, name="ccsc-general")
-        elif emoji == "3️⃣":
-            self.log.debug("Removing DFA from {}".format(user.name))
-            role = get(self.bot.guild.roles, name="dfa-general")
-        elif emoji == "4️⃣":
-            self.log.debug("Removing WIT from {}".format(user.name))
-            role = get(self.bot.guild.roles, name="wit-general")
-        elif emoji == "5️⃣":
-            self.log.debug("Removing NECCDC to {}".format(user.name))
-            role = get(self.bot.guild.roles, name="neccdc-interest")
-        else:
-            return
-        await user.remove_roles(role)
+        return await self.role_action(payload, "remove")
 
 
 def setup(bot):
