@@ -17,17 +17,17 @@ license_scanning:
 
 Lint_and_Check:
   stage: lint
-  image: python:3.8-slim
+  image: python:3.8-buster
   before_script:
     - pip install -U pip -r requirements-dev.txt --quiet
   script:
-    - ./test_script.sh
+    - make lint
   variables:
     PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
   cache:
     paths:
       - .cache/pip
-      - venv/
+
 
 deploy_to_heroku:
   image: ruby:2.7

@@ -99,8 +99,12 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
                 professor_role=professor_role,
             )
         )
-        await new_message.pin()
-        await new_started.pin()
+        await new_message.pin(
+            reason=f"Newest rules messages triggered by {ctx.author.display_name}"
+        )
+        await new_started.pin(
+            reason=f"Newest getting started message triggered by {ctx.author.display_name}"
+        )
         await self.bot.update_last_message("last_rules", new_message.id)
         await self.bot.update_last_message("last_started", new_started.id)
 

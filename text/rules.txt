@@ -3,6 +3,7 @@
 - Champlain Cyber Security Club (CCSC)
 - Champlain College Digital Forensics Association (DFA)
 - Women in Technology Club (WiT)
+- Math Club
 
 This is a student-run Discord. The focus of this Discord is to create a computer focused community for Champlain students. All people who have the roles of {mod_role} and/or {leader_role} are students or former students. While professors may be on here, they don’t control the discord and have limited access. Go to the #how-to-use channel to read how the server is set up and who has access to what.
 
