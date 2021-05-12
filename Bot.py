@@ -1,6 +1,8 @@
 """Main Bot File"""
 import os
+import re
 from datetime import datetime
+from typing import Optional
 import discord
 from discord.ext import commands
 import redis
@@ -79,6 +81,19 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
                 self.load_extension(extension)
             except commands.ExtensionError as e:
                 log.error("Failed to load extension {}. {}".format(extension, e))
+
+    async def get_role_from_name(self, role_name: str) -> Optional[discord.Role]:
+        """
+        Pulls role from Environment variables
+        :param role_name: The name of the role to get from the enviroment
+        :return:
+        """
+        if not role_name.endswith("_role"):
+            role_name += "_role"
+        role = os.environ.get(role_name)
+        if not role:
+            return
+        return self.guild.get_role(int(re.search(r"\d+", role).group()))
 
     async def update_last_message(self, key: str, message_id: int):
         """

@@ -21,6 +21,7 @@ class GraduationCog(commands.Cog, name="Graduation"):
         msg = await ctx.fetch_message(message_id)
         if not msg:
             return
+        await msg.add_reaction("🥳")
         await self.bot.update_last_message("last_graduation", msg.id)
         await ctx.message.delete()
 
@@ -28,16 +29,15 @@ class GraduationCog(commands.Cog, name="Graduation"):
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
         """On reaction the a user has their student role removed and Alumni role added"""
         user = self.bot.guild.get_member(payload.user_id)
-        student_role = get(self.bot.guild.roles, name="Student")
-        alum_role = get(self.bot.guild.roles, name="Alumni")
 
         if payload.message_id != self.bot.latest_message_ids["last_graduation"] or user.bot:
             return
-        emoji = str(payload.emoji)
-        if emoji != "🥳" or student_role not in user.roles:
+        student_role = get(self.bot.guild.roles, name="Student")
+        if str(payload.emoji) != "🥳" or student_role not in user.roles:
             return
-        await user.add_roles(student_role)
-        await user.remove_roles(alum_role)
+        alum_role = get(self.bot.guild.roles, name="Alumni")
+        await user.remove_roles(student_role)
+        await user.add_roles(alum_role)
 
 
 def setup(bot):

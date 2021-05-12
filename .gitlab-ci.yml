@@ -13,7 +13,7 @@ license_scanning:
   stage: test
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
-      when: always
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
 
 Lint_and_Check:
   stage: lint

@@ -1,0 +1,7 @@
+**React to get club specific notifications**
+:one: for ACM
+:two: for CCSC
+:three: for DFA
+:four: for WiT
+:five: for NECCDC Interest
+:six: for Math Club
