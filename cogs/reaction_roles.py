@@ -4,11 +4,6 @@ from discord.ext import commands
 from discord.utils import get
 from discord import RawReactionActionEvent, errors
 
-reaction_role_message = """
-**React to get club specific notifications**
-:one: for ACM, :two: for CCSC, :three: for DFA, :four: for WiT :five: for NECCDC Interest
-:six: for Math Club"""
-
 
 class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     """Cogs for reaction roles"""
@@ -65,7 +60,8 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             errors.HTTPException,
         ) as err:
             self.log.error(err)
-        new_message = await self.bot.rules_channel.send(reaction_role_message)
+        with open("text/reaction_roles.txt") as infile:
+            new_message = await self.bot.rules_channel.send(infile.read())
         await new_message.pin(
             reason=f"Newest reaction role message triggered by {ctx.author.display_name}"
         )

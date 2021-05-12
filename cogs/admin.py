@@ -1,7 +1,7 @@
 """Cogs for admin features"""
 from datetime import datetime
 from discord.ext import commands
-from discord import Embed
+from discord import Embed, PermissionOverwrite
 from cogs.reaction_roles import ReactionRoles
 from cogs.rules_verify import RulesVerify
 
@@ -60,6 +60,72 @@ class Admin(commands.Cog, name="Admin"):
         description = "Bot has been online since {} UTC".format(start_time)
         await ctx.send(
             embed=Embed(title=uptime_msg, timestamp=ctx.message.created_at, description=description)
+        )
+
+    @commands.command(name="create-club", help="Create a new club")
+    @commands.has_role("Moderator")
+    async def create_club(self, ctx: commands.Context, name: str):
+        """
+        Creates a new club from the name provided
+
+        :param name: Name of the club to make
+        :param ctx: Context of the command.
+        :type ctx: {discord.ext.commands.Context}
+        :return:
+        """
+        await ctx.send(f"Creating roles for new club {name}")
+        new_leadership = await self.bot.guild.create_role(
+            name=f"{name.upper()} Leadership", hoist=True, mentionable=True
+        )
+        await self.bot.guild.create_role(name=f"{name}-general")
+        student_role = await self.bot.get_role_from_name("student")
+        professor_role = await self.bot.get_role_from_name("professor")
+        alumni_role = await self.bot.get_role_from_name("alumni")
+        await ctx.send(f"Creating channels for new club {name}")
+        category = await self.bot.guild.create_category(
+            name=name,
+            overwrites={
+                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+                student_role: PermissionOverwrite(read_messages=True, send_messages=True),
+                professor_role: PermissionOverwrite(read_messages=True, send_messages=True),
+                alumni_role: PermissionOverwrite(read_messages=True, send_messages=True),
+                new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
+            },
+        )
+        await self.bot.guild.create_text_channel(
+            name=f"{name}-leadership",
+            category=category,
+            overwrites={
+                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+                student_role: PermissionOverwrite(read_messages=False),
+                professor_role: PermissionOverwrite(read_messages=False),
+                alumni_role: PermissionOverwrite(read_messages=False),
+                new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
+            },
+        )
+        await self.bot.guild.create_text_channel(
+            name=f"{name}-announcements",
+            category=category,
+            overwrites={
+                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+                student_role: PermissionOverwrite(send_messages=False),
+                professor_role: PermissionOverwrite(send_messages=False),
+                alumni_role: PermissionOverwrite(send_messages=False),
+                new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
+            },
+        )
+        await self.bot.guild.create_text_channel(
+            name=f"{name}-general",
+            category=category,
+            overwrites={
+                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+            },
+        )
+        await ctx.send(
+            "All roles and channels have been created.\n"
+            "Still to do:\n"
+            "  - Change color of new leadership role\n"
+            "  - Update the reaction roles to include the new club"
         )
 
 
