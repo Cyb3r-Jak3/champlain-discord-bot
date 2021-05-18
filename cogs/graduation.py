@@ -36,8 +36,8 @@ class GraduationCog(commands.Cog, name="Graduation"):
         if str(payload.emoji) != "🥳" or student_role not in user.roles:
             return
         alum_role = get(self.bot.guild.roles, name="Alumni")
-        await user.remove_roles(student_role)
-        await user.add_roles(alum_role)
+        await user.remove_roles(student_role, reason="Graduation!")
+        await user.add_roles(alum_role, reason="Graduation!")
 
 
 def setup(bot):

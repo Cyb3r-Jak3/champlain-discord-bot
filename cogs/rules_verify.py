@@ -54,7 +54,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         self.log.info("User {} accepted the rules".format(ctx.author.name))
         member = self.bot.guild.get_member(ctx.message.author.id)
         accepted_rules_role = discord.utils.get(self.bot.guild.roles, name="role-request")
-        await member.add_roles(accepted_rules_role)
+        await member.add_roles(accepted_rules_role, reason="Accepted the rules")
         embed = discord.Embed(
             title="Success",
             description="Thank you for accepting the rules. You'll now be able to request a role",
