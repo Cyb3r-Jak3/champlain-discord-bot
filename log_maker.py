@@ -6,7 +6,7 @@ def make_logger(name: str, log_level: str) -> logging.Logger:
     """Make_logger
     ---
 
-    Creates the logger that is used by the bot. Also imported to cogs and datahandler.
+    Creates the logger that is used by the bot. Also imported to cogs
 
     Arguments:
     ---
