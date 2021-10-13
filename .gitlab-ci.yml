@@ -17,7 +17,7 @@ license_scanning:
 
 Lint_and_Check:
   stage: lint
-  image: python:3.8-alpine
+  image: python:3.8-slim
   before_script:
     - pip install -U pip -r requirements-dev.txt --quiet
   script:
