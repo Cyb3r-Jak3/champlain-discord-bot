@@ -5,10 +5,10 @@ from discord.ext import commands
 import discord
 
 
-with open("text/rules.txt", "r") as f:
+with open("text/rules.txt", "r", encoding="utf-8") as f:
     rules = f.read()
 
-with open("text/getting_started.txt", "r") as f:
+with open("text/getting_started.txt", "r", encoding="utf-8") as f:
     getting_started = f.read()
 
 mod_role = os.environ["mod_role"]

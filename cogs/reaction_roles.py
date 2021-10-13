@@ -60,7 +60,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             errors.HTTPException,
         ) as err:
             self.log.error(err)
-        with open("text/reaction_roles.txt") as infile:
+        with open("text/reaction_roles.txt", encoding="utf-8") as infile:
             new_message = await self.bot.rules_channel.send(infile.read())
         await new_message.pin(
             reason=f"Newest reaction role message triggered by {ctx.author.display_name}"
