@@ -3,23 +3,31 @@ import os
 import re
 from datetime import datetime
 from typing import Optional
+from urllib.parse import urlparse
 import discord
 from discord.ext import commands
 import redis
-import log_maker
+from cyberjake import make_logger
 
 TOKEN = os.environ["DISCORD_TOKEN"]
 OWNER_NAME = os.environ["OWNER_NAME"]
-OWNER_ID = os.environ["OWNER_ID"]
 guild_id = int(os.environ["GUILD_ID"])
 channel_id = int(os.environ["CHANNEL_ID"])
 log_level = os.getenv("LOG_LEVEL", "INFO")
 
-log = log_maker.make_logger("Champlain Discord", log_level)
-r = redis.from_url(os.environ["REDIS_URL"])
+log = make_logger("Champlain Discord", log_level)
+url = urlparse(os.environ.get("REDIS_URL"))
+r = redis.Redis(
+    host=url.hostname,
+    port=url.port,
+    username=url.username,
+    password=url.password,
+    ssl=True,
+    ssl_cert_reqs=None,
+)
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin", "cogs.graduation"]
 intents = discord.Intents.default()
-intents.members = True
+intents.members = True  # pylint: disable=E0237
 description = (
     "Champlain Discord bot. Does rule verification and reaction roles.\n"
     "Source: https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot"
@@ -62,7 +70,7 @@ def _get_message_id(key: str) -> int:
 
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     def __init__(self):
-        super().__init__(command_prefix="?", owner_id=OWNER_ID, intents=intents)
+        super().__init__(command_prefix="?", intents=intents)
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
         self.guild, self.rules_channel = "", ""
@@ -85,7 +93,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     async def get_role_from_name(self, role_name: str) -> Optional[discord.Role]:
         """
         Pulls role from Environment variables
-        :param role_name: The name of the role to get from the enviroment
+        :param role_name: The name of the role to get from the environment
         :return:
         """
         if not role_name.endswith("_role"):

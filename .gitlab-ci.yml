@@ -17,7 +17,7 @@ license_scanning:
 
 Lint_and_Check:
   stage: lint
-  image: python:3.8-buster
+  image: python:3.8-bullseye
   before_script:
     - pip install -U pip -r requirements-dev.txt --quiet
   script:
