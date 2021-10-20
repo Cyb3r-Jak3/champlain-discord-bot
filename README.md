@@ -1,9 +1,8 @@
-<!-- https://discord.com/api/oauth2/authorize?client_id=726520970428416080&permissions=268512320&scope=bot -->
+<!-- https://discord.com/api/oauth2/authorize?client_id=726520970428416080&permissions=395405438016&scope=bot -->
 
 # Champlain Discord Bot
-[![DeepSource](https://deepsource.io/gl/Cyb3r-Jak3/champlain_discord_bot.svg/?label=active+issues&show_trend=true)](https://deepsource.io/gl/Cyb3r-Jak3/champlain_discord_bot/?ref=repository-badge)
-[![pipeline status](https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot/badges/master/pipeline.svg)](https://gitlab.com/Cyb3r-Jak3/champlain_discord_bot/-/commits/master)
----
+[![DeepSource](https://deepsource.io/gh/Cyb3r-Jak3/champlain-discord-bot.svg/?label=active+issues&show_trend=true&token=eAWyB3aB_Tsiy7Q3RN0V0oaf)](https://deepsource.io/gh/Cyb3r-Jak3/champlain-discord-bot/?ref=repository-badge)
+[![Python Checking](https://github.com/Cyb3r-Jak3/champlain-discord-bot/actions/workflows/lint.yml/badge.svg)](https://github.com/Cyb3r-Jak3/champlain-discord-bot/actions/workflows/lint.yml)---
 
-Simple bot that does reaction roles and rule reading verification.
+Simple bot that does reaction roles and rule reading verification. To learn how to maintain check out the [wiki](https://github.com/Cyb3r-Jak3/champlain-discord-bot/wiki/How-to-Maintain).
 

@@ -13,7 +13,7 @@ updates:
     reviewers:
       - "Cyb3r-Jak3"
 
-  # Maintain dependecnies for python
+  # Maintain dependencies for python
   - package-ecosystem: pip
     directory: "/"
     labels:
