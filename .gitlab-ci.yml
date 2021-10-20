@@ -13,15 +13,3 @@ license_scanning:
   rules:
     - if: '$CI_COMMIT_BRANCH == "master"'
     - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
-
-
-#deploy_to_heroku:
-#  image: ruby:2.7
-#  stage: deploy
-#  before_script:
-#    - gem install dpl
-#  script:
-#    - dpl --provider=heroku --app=$APP_NAME --api-key=$HEROKU_API_KEY
-#  rules:
-#    - if: '$CI_COMMIT_TAG =~ /^v*/ && $CI_COMMIT_BRANCH == "master"'
-#      when: always

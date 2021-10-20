@@ -1,5 +1,4 @@
 """Cog for rule verification"""
-import logging
 import os
 from discord.ext import commands
 import discord
@@ -25,12 +24,11 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
 
     def __init__(self, bot):
         self.bot = bot
-        self.log = logging.getLogger("Champlain Discord")
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         """Sends user the rules when they join"""
-        self.log.debug("User: {} joined".format(member.name))
+        self.bot.log.debug("User: {} joined".format(member.name))
         await member.send(
             rules.format(
                 mod_role="@Moderator",
@@ -51,7 +49,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     @commands.dm_only()
     async def accept_rules(self, ctx: commands.Context):
         """Assigns user the role-request role when they accept the rules"""
-        self.log.info("User {} accepted the rules".format(ctx.author.name))
+        self.bot.log.info("User {} accepted the rules".format(ctx.author.name))
         member = self.bot.guild.get_member(ctx.message.author.id)
         accepted_rules_role = discord.utils.get(self.bot.guild.roles, name="role-request")
         await member.add_roles(accepted_rules_role, reason="Accepted the rules")
@@ -72,18 +70,24 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
             old_rules = await self.bot.rules_channel.fetch_message(
                 self.bot.latest_message_ids["last_rules"]
             )
+            if old_rules is None:
+                self.bot.log.warning("There is no old rules message")
+            else:
+                await old_rules.delete()
             old_started = await self.bot.rules_channel.fetch_message(
                 self.bot.latest_message_ids["last_started"]
             )
-            await old_started.delete()
-            await old_rules.delete()
+            if old_started is None:
+                self.bot.log.warning("There is no old getting started message")
+            else:
+                await old_started.delete()
         except (
             commands.CommandInvokeError,
             AttributeError,
             discord.errors.NotFound,
             discord.errors.HTTPException,
         ) as err:
-            self.log.error(err)
+            self.bot.log.error(err)
         new_message = await self.bot.rules_channel.send(
             rules.format(
                 mod_role=mod_role,

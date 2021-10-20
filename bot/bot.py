@@ -7,24 +7,36 @@ from urllib.parse import urlparse
 import discord
 from discord.ext import commands
 import redis
-from cyberjake import make_logger
+from log_maker import make_logger
 
 TOKEN = os.environ["DISCORD_TOKEN"]
-OWNER_NAME = os.environ["OWNER_NAME"]
 guild_id = int(os.environ["GUILD_ID"])
 channel_id = int(os.environ["CHANNEL_ID"])
-log_level = os.getenv("LOG_LEVEL", "INFO")
+log = make_logger("Champlain Discord", os.getenv("LOG_LEVEL", "INFO"))
 
-log = make_logger("Champlain Discord", log_level)
-url = urlparse(os.environ.get("REDIS_URL"))
-r = redis.Redis(
-    host=url.hostname,
-    port=url.port,
-    username=url.username,
-    password=url.password,
-    ssl=False,
-    ssl_cert_reqs=None,
-)
+if os.environ.get("REDIS_TLS_URL"):
+    log.debug("Using redis TLS")
+    url = urlparse(os.environ.get("REDIS_TLS_URL"))
+    r = redis.Redis(
+        host=url.hostname,
+        port=url.port,
+        username=url.username,
+        password=url.password,
+        ssl=True,
+        ssl_cert_reqs=None,
+    )
+elif os.environ.get("REDIS_URL"):
+    log.debug("Using redis")
+    url = urlparse(os.environ.get("REDIS_URL"))
+    r = redis.Redis(
+        host=url.hostname,
+        port=url.port,
+        username=url.username,
+        password=url.password,
+
+    )
+else:
+    raise EnvironmentError("No REDIS URL configured")
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin", "cogs.graduation"]
 intents = discord.Intents.default()
 intents.members = True  # pylint: disable=E0237
@@ -75,6 +87,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         self.latest_message_ids = total_ids()
         self.guild, self.rules_channel = "", ""
         self.description = description
+        self.log = log
 
     async def on_ready(self):
         """When bot has connected to Discord"""
@@ -82,7 +95,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
             try:
                 self.load_extension(extension)
             except commands.ExtensionError as e:
-                log.error("Failed to load extension {}. {}".format(extension, e))
+                self.log.error("Failed to load extension {}. {}".format(extension, e))
         self.guild = self.get_guild(guild_id)
         self.rules_channel = self.get_channel(channel_id)
         await self.change_presence(

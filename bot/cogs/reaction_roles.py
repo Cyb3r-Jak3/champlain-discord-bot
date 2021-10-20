@@ -1,5 +1,4 @@
 """Cog for reaction roles"""
-import logging
 from discord.ext import commands
 from discord.utils import get
 from discord import RawReactionActionEvent, errors
@@ -10,7 +9,6 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
 
     def __init__(self, bot):
         self.bot = bot
-        self.log = logging.getLogger("Champlain Discord")
 
     async def role_action(self, payload: RawReactionActionEvent, action: str) -> None:
         """Performs a role action (add or remove) on a user"""
@@ -33,10 +31,10 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             case _:
                 return
         if action == "add":
-            self.log.debug("Adding {} to {}".format(role.name, user.name))
+            self.bot.log.debug("Adding {} to {}".format(role.name, user.name))
             await user.add_roles(role, reason="Reaction Roles")
         elif action == "remove":
-            self.log.debug("Removing {} from {}".format(role.name, user.name))
+            self.bot.log.debug("Removing {} from {}".format(role.name, user.name))
             await user.remove_roles(role, reason="Reaction Roles")
         else:
             raise NotImplementedError
@@ -52,6 +50,9 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             old_message = await self.bot.rules_channel.fetch_message(
                 self.bot.latest_message_ids["last_reaction"]
             )
+            if old_message is None:
+                self.bot.log.warning("There is no old reactions message")
+                return
             await old_message.delete()
         except (
             commands.CommandInvokeError,
@@ -59,7 +60,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             errors.NotFound,
             errors.HTTPException,
         ) as err:
-            self.log.error(err)
+            self.bot.log.error(err)
         with open("text/reaction_roles.txt", encoding="utf-8") as infile:
             new_message = await self.bot.rules_channel.send(infile.read())
         await new_message.pin(
