@@ -22,7 +22,7 @@ r = redis.Redis(
     port=url.port,
     username=url.username,
     password=url.password,
-    ssl=True,
+    ssl=False,
     ssl_cert_reqs=None,
 )
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin", "cogs.graduation"]

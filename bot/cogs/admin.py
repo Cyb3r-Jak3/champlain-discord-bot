@@ -2,8 +2,8 @@
 from datetime import datetime
 from discord.ext import commands
 from discord import Embed, PermissionOverwrite
-from bot.cogs.reaction_roles import ReactionRoles
-from bot.cogs.rules_verify import RulesVerify
+from .reaction_roles import ReactionRoles
+from .rules_verify import RulesVerify
 
 
 class Admin(commands.Cog, name="Admin"):
@@ -50,7 +50,7 @@ class Admin(commands.Cog, name="Admin"):
         """
         uptime = datetime.utcnow() - self.bot.uptime
         uptime_msg = (
-            ":clock1: Days: {}, Hours: {}, Minutes:{}, Seconds: {}".format(  # pylint: disable=C0209
+            ":clock1: Days: {}, Hours: {}, Minutes: {}, Seconds: {}".format(  # pylint: disable=C0209
                 uptime.days,
                 uptime.seconds // 3600,  # Hours
                 (uptime.seconds // 60) % 60,  # Minutes
