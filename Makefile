@@ -1,10 +1,10 @@
 PHONY: lint
 
 lint:
-	pylint --disable=R1710,C0209 Bot.py log_maker.py ./cogs/
-	flake8 Bot.py log_maker.py ./cogs/ --max-line-length 100 --statistics --show-source --count
-	bandit -r Bot.py log_maker.py ./cogs/
-	black --check --line-length 100 .
+	cd bot && pylint --disable=R1710,C0209 .
+	flake8 ./bot --max-line-length 101 --statistics --show-source --count
+	bandit -r ./bot
+#	black --check --line-length 101 ./bot
 
-black-reformat:
-	black --line-length 100 .
+reformat:
+	black --line-length 101 ./bot
