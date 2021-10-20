@@ -10,7 +10,6 @@ on:
     branches:
       - master
 
-
 jobs:
   Lint:
     runs-on: ubuntu-latest
@@ -39,7 +38,3 @@ jobs:
 
     - name: Lint
       run: make lint
-
-    - name: Test
-      run: make test
-
