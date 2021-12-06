@@ -1,5 +1,5 @@
 -r requirements.txt
 bandit == 1.7.1
 black == 21.12b0
-pylint == 2.12.1
+pylint == 2.12.2
 flake8 == 4.0.1
