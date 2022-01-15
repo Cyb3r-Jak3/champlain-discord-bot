@@ -15,7 +15,7 @@ def make_logger(name: str, log_level: str) -> logging.Logger:
     ---
         logging.Logger -- Logger class that handled the logging.
     """
-    discord_logger = logging.getLogger('discord')
+    discord_logger = logging.getLogger("discord")
     this_logger = logging.getLogger(name)
     for logger in [discord_logger, this_logger]:
         logger.setLevel(log_level)

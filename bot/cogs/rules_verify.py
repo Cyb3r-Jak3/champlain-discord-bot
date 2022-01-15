@@ -103,9 +103,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
                 professor_role=professor_role,
             )
         )
-        await new_message.pin(
-            reason=f"Newest rules messages triggered by {ctx.author.display_name}"
-        )
+        await new_message.pin(reason=f"Newest rules messages triggered by {ctx.author.display_name}")
         await new_started.pin(
             reason=f"Newest getting started message triggered by {ctx.author.display_name}"
         )

@@ -33,7 +33,6 @@ elif os.environ.get("REDIS_URL"):
         port=url.port,
         username=url.username,
         password=url.password,
-
     )
 else:
     raise EnvironmentError("No REDIS URL configured")
