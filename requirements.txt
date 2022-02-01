@@ -1,4 +1,4 @@
 aiohttp==3.7.4.post0
 discord.py==1.7.3
 redis==4.1.1
-cyberjake==0.0.4
+cyberjake==0.0.5
