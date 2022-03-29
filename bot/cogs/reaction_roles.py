@@ -92,6 +92,6 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         return await self.role_action(payload, "remove")
 
 
-def setup(bot):
+async def setup(bot):
     """Needed for extension loading"""
-    bot.add_cog(ReactionRoles(bot))
+    await bot.add_cog(ReactionRoles(bot))

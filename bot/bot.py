@@ -92,7 +92,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         """When bot has connected to Discord"""
         for extension in initial_extensions:
             try:
-                self.load_extension(extension)
+                await self.load_extension(extension)
             except commands.ExtensionError as e:
                 self.log.error("Failed to load extension {}. {}".format(extension, e))
         self.guild = self.get_guild(guild_id)

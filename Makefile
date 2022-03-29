@@ -6,5 +6,5 @@ lint:
 	bandit -r ./bot
 	black --check --line-length 101 --target-version py310 ./bot
 
-reformat:
+format:
 	black --line-length 101 --target-version py310 ./bot
