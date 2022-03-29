@@ -131,6 +131,6 @@ class Admin(commands.Cog, name="Admin"):
         )
 
 
-def setup(bot):
+async def setup(bot):
     """Needed for extension loading"""
-    bot.add_cog(Admin(bot))
+    await bot.add_cog(Admin(bot))

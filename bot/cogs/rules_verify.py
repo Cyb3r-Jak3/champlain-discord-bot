@@ -10,13 +10,13 @@ with open("text/rules.txt", "r", encoding="utf-8") as f:
 with open("text/getting_started.txt", "r", encoding="utf-8") as f:
     getting_started = f.read()
 
-mod_role = os.environ["mod_role"]
-leader_role = os.environ["leader_role"]
-student_role = os.environ["student_role"]
-alumni_role = os.environ["alumni_role"]
-professor_role = os.environ["professor_role"]
-homework = os.environ["homework_channel"]
-troubleshooting = os.environ["troubleshooting_channel"]
+mod_role = os.environ["MOD_ROLE"]
+leader_role = os.environ["LEADER_ROLE"]
+student_role = os.environ["STUDENT_ROLE"]
+alumni_role = os.environ["ALUMNI_ROLE"]
+professor_role = os.environ["PROFESSOR_ROLE"]
+homework = os.environ["HOMEWORK_CHANNEL"]
+troubleshooting = os.environ["TROUBLESHOOTING_CHANNEL"]
 
 
 class RulesVerify(commands.Cog, name="Rules_Verify"):
@@ -111,6 +111,6 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         await self.bot.update_last_message("last_started", new_started.id)
 
 
-def setup(bot):
+async def setup(bot):
     """Needed for extension loading"""
-    bot.add_cog(RulesVerify(bot))
+    await bot.add_cog(RulesVerify(bot))
