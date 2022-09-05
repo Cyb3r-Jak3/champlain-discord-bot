@@ -1,3 +1,2 @@
-discord.py @ git+https://github.com/Rapptz/discord.py@8524bfb54db977c74c7da31765fa36e49753eb3e
-redis==4.3.4
+discord.py==2.0.1
 cyberjake==0.0.5

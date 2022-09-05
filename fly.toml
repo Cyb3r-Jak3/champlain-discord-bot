@@ -1,0 +1,16 @@
+# fly.toml file generated for champ-discord-bot on 2022-09-03T20:01:28-04:00
+
+app = "champ-discord-bot"
+kill_signal = "SIGINT"
+kill_timeout = 5
+processes = []
+
+[mounts]
+source="champ_discord"
+destination="/data"
+
+[env]
+  LOG_LEVEL="INFO"
+
+[experimental]
+  auto_rollback = true

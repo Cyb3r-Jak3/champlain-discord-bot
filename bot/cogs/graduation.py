@@ -14,7 +14,7 @@ class GraduationCog(commands.Cog, name="Graduation"):
 
     @commands.command(name="set-graduation")
     @commands.has_role("Moderator")
-    async def graduation_message(self, ctx: commands.Context, *, message_id):
+    async def graduation_message(self, ctx: commands.Context, *, message_id: int):
         """Gets a message based of given message ID"""
         try:
             msg = await ctx.fetch_message(message_id)
@@ -31,19 +31,19 @@ class GraduationCog(commands.Cog, name="Graduation"):
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
-        """On reaction the a user has their student role removed and Alumni role added"""
-        user = self.bot.guild.get_member(payload.user_id)
-
-        if payload.message_id != self.bot.latest_message_ids["last_graduation"] or user.bot:
+        """On reaction the user has their student role removed and Alumni role added"""
+        guild: discord.Guild = self.bot.get_guild(payload.guild_id)
+        member: discord.Member = guild.get_member(payload.user_id)
+        if payload.message_id != self.bot.latest_message_ids["last_graduation"] or member.bot:
             return
-        student_role = get(self.bot.guild.roles, name="Student")
-        if str(payload.emoji) != "🥳" or student_role not in user.roles:
+        student_role = get(guild.roles, id=self.bot.guild_info[guild.id]["roles"]["student"])
+        if str(payload.emoji) != "🥳" or student_role not in member.roles:
             return
-        alum_role = get(self.bot.guild.roles, name="Alumni")
-        await user.remove_roles(student_role, reason="Graduation!")
-        await user.add_roles(alum_role, reason="Graduation!")
+        alum_role = get(guild.roles, id=self.bot.guild_info[guild.id]["roles"]["alumni"])
+        await member.remove_roles(student_role, reason="Graduation!")
+        await member.add_roles(alum_role, reason="Graduation!")
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     """Needed for extension loading"""
     await bot.add_cog(GraduationCog(bot))
