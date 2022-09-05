@@ -19,7 +19,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
         """Sends user the rules when they join"""
-        self.bot.log.debug("User: {} joined".format(member.name))
+        self.bot.log.debug("User: %s joined", member.name)
         accepted_rules_role = self.bot.load_role(member.guild.id, "role-request")
         await member.add_roles(accepted_rules_role, reason="User joined")
         await member.send(

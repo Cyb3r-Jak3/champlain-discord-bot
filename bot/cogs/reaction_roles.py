@@ -33,7 +33,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             case _:
                 return
         if action == "add":
-            self.bot.log.debug("Adding {} to {}".format(role.name, user.name))
+            self.bot.log.debug("Adding %s to %s", role.name, user.name)
             await user.add_roles(role, reason="Reaction Roles")
         elif action == "remove":
             self.bot.log.debug("Removing {} from {}".format(role.name, user.name))

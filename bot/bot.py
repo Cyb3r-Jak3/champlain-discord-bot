@@ -78,11 +78,11 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         try:
             for role in new_copy["roles"].keys():
                 new_copy["roles"][role] = discord.utils.find(
-                    lambda r: r.name.lower() == role, guild.roles
+                    lambda r: r.name.lower() == role, guild.roles  # skipcq: PYL-W0640
                 ).id
             for channel in new_copy["channels"]:
                 new_copy["channels"][channel] = discord.utils.find(
-                    lambda c: c.name.lower() == channel, guild.channels
+                    lambda c: c.name.lower() == channel, guild.channels  # skipcq: PYL-W0640
                 ).id
             self.guild_info[guild.id] = new_copy
         except AttributeError as err:
@@ -101,7 +101,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
             try:
                 await self.load_extension(extension)
             except commands.ExtensionError as e:
-                self.log.error("Failed to load extension {}. {}".format(extension, e))
+                self.log.error("Failed to load extension %s. %s", extension, e)
         for guild in self.guilds:
             self.load_guild_info(guild)
         await self.change_presence(
