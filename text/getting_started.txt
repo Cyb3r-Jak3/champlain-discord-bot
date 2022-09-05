@@ -1,4 +1,3 @@
 **To get started**:
-1) Accept the rules by replying `?accept` to the Champlain-Management-Bot (check your DMs)
-2) Change your nickname to your real first and last name for verification purposes
-3) Post in the #role-requests with the role that matches your status ({student_role}, {alumni_role}, or {professor_role})
+1) Change your nickname to your real first and last name for verification purposes
+2) Post in the #role-requests with the role that matches your status ({student_role}, {alumni_role}, or {professor_role})

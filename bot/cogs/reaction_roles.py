@@ -1,4 +1,5 @@
 """Cog for reaction roles"""
+import discord
 from discord.ext import commands
 from discord.utils import get
 from discord import RawReactionActionEvent, errors
@@ -8,26 +9,27 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     """Cogs for reaction roles"""
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: "Discord_Bot" = bot
 
     async def role_action(self, payload: RawReactionActionEvent, action: str) -> None:
         """Performs a role action (add or remove) on a user"""
-        user = self.bot.guild.get_member(payload.user_id)
+        guild: discord.Guild = self.bot.get_guild(payload.guild_id)
+        user = guild.get_member(payload.user_id)
         if payload.message_id != self.bot.latest_message_ids["last_reaction"] or user.bot:
             return
         match str(payload.emoji):
             case "1️⃣":
-                role = get(self.bot.guild.roles, name="acm-general")
+                role = get(guild.roles, name="acm-general")
             case "2️⃣":
-                role = get(self.bot.guild.roles, name="ccsc-general")
+                role = get(guild.roles, name="ccsc-general")
             case "3️⃣":
-                role = get(self.bot.guild.roles, name="dfa-general")
+                role = get(guild.roles, name="dfa-general")
             case "4️⃣":
-                role = get(self.bot.guild.roles, name="wit-general")
+                role = get(guild.roles, name="wit-general")
             case "5️⃣":
-                role = get(self.bot.guild.roles, name="neccdc-interest")
+                role = get(guild.roles, name="neccdc-interest")
             case "6️⃣":
-                role = get(self.bot.guild.roles, name="math-club-general")
+                role = get(guild.roles, name="math-club-general")
             case _:
                 return
         if action == "add":
@@ -46,8 +48,9 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         """Command that generates a new role reaction message and updates it in redis cache"""
         if delete:
             await ctx.message.delete()
+        rules_channel = self.bot.load_channel(ctx.guild.id, "rules-read-me")
         try:
-            old_message = await self.bot.rules_channel.fetch_message(
+            old_message = await rules_channel.fetch_message(
                 self.bot.latest_message_ids["last_reaction"]
             )
             if old_message is None:
@@ -62,7 +65,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         ) as err:
             self.bot.log.error(err)
         with open("text/reaction_roles.txt", encoding="utf-8") as infile:
-            new_message = await self.bot.rules_channel.send(infile.read())
+            new_message = await rules_channel.send(infile.read())
         await new_message.pin(
             reason=f"Newest reaction role message triggered by {ctx.author.display_name}"
         )

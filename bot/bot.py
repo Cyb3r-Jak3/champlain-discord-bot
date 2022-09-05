@@ -1,48 +1,25 @@
 """Main Bot File"""
+import json
 import os
-import re
 from datetime import datetime
-from typing import Optional
-from urllib.parse import urlparse
 import discord
 from discord.ext import commands
-import redis
 from log_maker import make_logger
 
 TOKEN = os.environ["DISCORD_TOKEN"]
-guild_id = int(os.environ["GUILD_ID"])
-channel_id = int(os.environ["CHANNEL_ID"])
 log = make_logger("Champlain Discord", os.getenv("LOG_LEVEL", "INFO"))
+data_directory = os.getenv("DATA_DIR", "/data")
 
-if os.environ.get("REDIS_TLS_URL"):
-    log.debug("Using redis TLS")
-    url = urlparse(os.environ.get("REDIS_TLS_URL"))
-    r = redis.Redis(
-        host=url.hostname,
-        port=url.port,
-        username=url.username,
-        password=url.password,
-        ssl=True,
-        ssl_cert_reqs=None,
-    )
-elif os.environ.get("REDIS_URL"):
-    log.debug("Using redis")
-    url = urlparse(os.environ.get("REDIS_URL"))
-    r = redis.Redis(
-        host=url.hostname,
-        port=url.port,
-        username=url.username,
-        password=url.password,
-    )
-else:
-    raise EnvironmentError("No REDIS URL configured")
 initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin", "cogs.graduation"]
 intents = discord.Intents.default()
-intents.members = True  # pylint: disable=E0237
+intents.message_content = True
+intents.members = True
 description = (
     "Champlain Discord bot. Does rule verification and reaction roles.\n"
     "Source: https://github.com/Cyb3r-Jak3/champlain-discord-bot"
 )
+with open("./text/info.json", encoding="utf-8") as f:
+    guild_info = json.load(f)
 
 
 def total_ids() -> dict:
@@ -63,7 +40,8 @@ def _set_last_message_id(key: str, message: int) -> None:
     message The message id of the key
 
     """
-    r.set(key, message)
+    with open(f"{data_directory}/{key}", "w+", encoding="utf-8") as outfile:
+        outfile.write(str(message))
 
 
 def _get_message_id(key: str) -> int:
@@ -74,19 +52,42 @@ def _get_message_id(key: str) -> int:
     int - ID of the last role_reaction_message
     """
     try:
-        return int(r.get(key).decode("utf-8"))
-    except AttributeError:
+        with open(f"{data_directory}/{key}", "r", encoding="utf-8") as infile:
+            return int(infile.read())
+    except (AttributeError, FileNotFoundError) as err:
+        log.debug("Error getting key '%s': %s", key, err)
         pass
 
 
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     def __init__(self):
-        super().__init__(command_prefix="?", intents=intents)
+        super().__init__(command_prefix="?", intents=intents, description=description)
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
-        self.guild, self.rules_channel = "", ""
-        self.description = description
         self.log = log
+        self.guild_info: dict = {}
+
+    def load_guild_info(self, guild: discord.Guild):
+        new_copy = guild_info.copy()
+        try:
+            for role in new_copy["roles"].keys():
+                new_copy["roles"][role] = discord.utils.find(
+                    lambda r: r.name.lower() == role, guild.roles
+                ).id
+            for channel in new_copy["channels"]:
+                new_copy["channels"][channel] = discord.utils.find(
+                    lambda c: c.name.lower() == channel, guild.channels
+                ).id
+            self.guild_info[guild.id] = new_copy
+        except AttributeError as err:
+            log.error("Error loading guild info for '%s': %s", guild.name, err)
+            pass
+
+    def load_channel(self, guild: int, name: str) -> discord.TextChannel:
+        return self.get_channel(self.guild_info[guild]["channels"][name])
+
+    def load_role(self, guild: int, name: str) -> discord.Role:
+        return self.get_guild(guild).get_role(self.guild_info[guild]["roles"][name])
 
     async def on_ready(self):
         """When bot has connected to Discord"""
@@ -95,25 +96,12 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
                 await self.load_extension(extension)
             except commands.ExtensionError as e:
                 self.log.error("Failed to load extension {}. {}".format(extension, e))
-        self.guild = self.get_guild(guild_id)
-        self.rules_channel = self.get_channel(channel_id)
+        for guild in self.guilds:
+            self.load_guild_info(guild)
         await self.change_presence(
             activity=discord.Activity(name="?help", type=discord.ActivityType.playing)
         )
         log.info("Online")
-
-    async def get_role_from_name(self, role_name: str) -> Optional[discord.Role]:
-        """
-        Pulls role from Environment variables
-        :param role_name: The name of the role to get from the environment
-        :return:
-        """
-        if not role_name.endswith("_role"):
-            role_name += "_role"
-        role = os.environ.get(role_name)
-        if not role:
-            return
-        return self.guild.get_role(int(re.search(r"\d+", role).group()))
 
     async def update_last_message(self, key: str, message_id: int):
         """
@@ -125,6 +113,16 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         """
         self.latest_message_ids[key] = message_id
         _set_last_message_id(key, message_id)
+
+    async def get_last_message(self, key: str):
+        """
+        Gets the last message id both for the bot.
+        Parameters
+        ----------
+        message_id The ID of the latest reaction message
+
+        """
+        return self.latest_message_ids[key]
 
 
 bot = Discord_Bot()

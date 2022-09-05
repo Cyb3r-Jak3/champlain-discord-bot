@@ -13,7 +13,7 @@ class Admin(commands.Cog, name="Admin"):
         self.bot = bot
 
     @commands.command(name="reload-extension", help="reloads <extension>")
-    @commands.has_role("Moderator")
+    @commands.is_owner()
     async def reload_extension(self, ctx: commands.Context, extension: str):
         """reload_extension
         ---
@@ -63,6 +63,22 @@ class Admin(commands.Cog, name="Admin"):
         await ctx.send(
             embed=Embed(title=uptime_msg, timestamp=ctx.message.created_at, description=description)
         )
+
+    @commands.command(name="set-message", help="Manually set a message key")
+    @commands.is_owner()
+    async def manual_message_set(self, ctx: commands.Context, key: str, value: str):
+        if key not in self.bot.latest_message_ids.keys():
+            return await ctx.send(f"Key {key} is not valid")
+        await self.bot.update_last_message(key, value)
+        await ctx.send(f"Key: `{key}` has been set to **{value}**")
+
+    @commands.command(name="get-message", help="Get a message key")
+    @commands.is_owner()
+    async def manual_message_get(self, ctx: commands.Context, key: str):
+        if key not in self.bot.latest_message_ids.keys():
+            return await ctx.send(f"Key {key} is not valid")
+        value = await self.bot.get_last_message(key)
+        await ctx.send(f"Key: `{key}`: **{value}**")
 
     @commands.command(name="create-club", help="Create a new club")
     @commands.has_role("Moderator")

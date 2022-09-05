@@ -1,0 +1,15 @@
+{
+  "roles": {
+    "moderator": 0,
+    "leadership": 0,
+    "student": 0,
+    "alumni": 0,
+    "professor": 0,
+    "role-request": 0
+  },
+  "channels": {
+    "rules-read-me": 0,
+    "homework-help": 0,
+    "troubleshooting-questions": 0
+  }
+}
