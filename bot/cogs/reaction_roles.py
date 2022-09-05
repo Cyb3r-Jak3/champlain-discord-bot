@@ -9,7 +9,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     """Cogs for reaction roles"""
 
     def __init__(self, bot):
-        self.bot: "Discord_Bot" = bot
+        self.bot = bot
 
     async def role_action(self, payload: RawReactionActionEvent, action: str) -> None:
         """Performs a role action (add or remove) on a user"""
@@ -95,6 +95,6 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         return await self.role_action(payload, "remove")
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     """Needed for extension loading"""
     await bot.add_cog(ReactionRoles(bot))

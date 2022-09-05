@@ -90,6 +90,6 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         await self.bot.update_last_message("last_started", new_started.id)
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     """Needed for extension loading"""
     await bot.add_cog(RulesVerify(bot))

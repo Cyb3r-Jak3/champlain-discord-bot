@@ -44,6 +44,6 @@ class GraduationCog(commands.Cog, name="Graduation"):
         await member.add_roles(alum_role, reason="Graduation!")
 
 
-async def setup(bot):
+async def setup(bot: commands.Bot) -> None:
     """Needed for extension loading"""
     await bot.add_cog(GraduationCog(bot))
