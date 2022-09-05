@@ -36,7 +36,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             self.bot.log.debug("Adding %s to %s", role.name, user.name)
             await user.add_roles(role, reason="Reaction Roles")
         elif action == "remove":
-            self.bot.log.debug("Removing {} from {}".format(role.name, user.name))
+            self.bot.log.debug("Removing %s from %s", role.name, user.name)
             await user.remove_roles(role, reason="Reaction Roles")
         else:
             raise NotImplementedError
