@@ -61,7 +61,6 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         except (
             commands.CommandInvokeError,
             AttributeError,
-            discord.errors.NotFound,
             discord.errors.HTTPException,
         ) as err:
             self.bot.log.error(err)

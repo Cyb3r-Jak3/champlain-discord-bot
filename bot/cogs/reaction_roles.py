@@ -61,7 +61,6 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             commands.CommandInvokeError,
             AttributeError,
             errors.NotFound,
-            errors.HTTPException,
         ) as err:
             self.bot.log.error(err)
         with open("text/reaction_roles.txt", encoding="utf-8") as infile:

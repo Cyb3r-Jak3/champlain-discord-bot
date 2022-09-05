@@ -2,6 +2,8 @@
 import json
 import os
 from datetime import datetime
+from typing import Optional
+
 import discord
 from discord.ext import commands
 from log_maker import make_logger
@@ -40,17 +42,21 @@ def _set_last_message_id(key: str, message: int) -> None:
     message The message id of the key
 
     """
+    if key not in ["last_reaction", "last_rules", "last_started", "last_graduation"]:
+        return None
     with open(f"{data_directory}/{key}", "w+", encoding="utf-8") as outfile:
         outfile.write(str(message))
 
 
-def _get_message_id(key: str) -> int:
+def _get_message_id(key: str) -> Optional[int]:
     """
     Returns the role reaction message from redis cache
     Returns
     -------
     int - ID of the last role_reaction_message
     """
+    if key not in ["last_reaction", "last_rules", "last_started", "last_graduation"]:
+        return
     try:
         with open(f"{data_directory}/{key}", "r", encoding="utf-8") as infile:
             return int(infile.read())
