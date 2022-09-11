@@ -30,6 +30,8 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
                 role = get(guild.roles, name="neccdc-interest")
             case "6️⃣":
                 role = get(guild.roles, name="math-club-general")
+            case "7️⃣":
+                role = get(guild.roles, name="doc-general")
             case _:
                 return
         if action == "add":
@@ -50,13 +52,16 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             await ctx.message.delete()
         rules_channel = self.bot.load_channel(ctx.guild.id, "rules-read-me")
         try:
-            old_message = await rules_channel.fetch_message(
-                self.bot.latest_message_ids["last_reaction"]
-            )
-            if old_message is None:
-                self.bot.log.warning("There is no old reactions message")
-                return
-            await old_message.delete()
+            if self.bot.latest_message_ids["last_reaction"] is not None:
+                old_message = await rules_channel.fetch_message(
+                    self.bot.latest_message_ids["last_reaction"]
+                )
+                if old_message is None:
+                    self.bot.log.warning("There is no old reactions message")
+                else:
+                    await old_message.delete()
+            else:
+                self.bot.log.warning("There is no old reactions message ID")
         except (
             commands.CommandInvokeError,
             AttributeError,
@@ -69,7 +74,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             reason=f"Newest reaction role message triggered by {ctx.author.display_name}"
         )
         await self.bot.update_last_message("last_reaction", new_message.id)
-        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣"]:
+        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]:
             await new_message.add_reaction(reaction)
 
     @commands.Cog.listener()

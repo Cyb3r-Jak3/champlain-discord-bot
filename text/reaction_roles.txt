@@ -5,3 +5,4 @@
 :four: for WiT
 :five: for NECCDC Interest
 :six: for Math Club
+:seven: for DevOpsClub

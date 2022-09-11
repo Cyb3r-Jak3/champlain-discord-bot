@@ -27,7 +27,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
                 mod_role="@Moderator",
                 leader_role="@Leadership",
                 homework_channel="#homework-help",
-                troubleshooting_channel="#troubleshooting",
+                troubleshooting_channel="#troubleshooting-questions",
             )
         )
         await member.send(
@@ -71,7 +71,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
                 mod_role=f"<@&{guild_info['roles']['moderator']}>",
                 leader_role=f"<@&{guild_info['roles']['leadership']}>",
                 homework_channel=f"<#{guild_info['channels']['homework-help']}>",
-                troubleshooting_channel=f"<#{guild_info['channels']['troubleshooting']}>",
+                troubleshooting_channel=f"<#{guild_info['channels']['troubleshooting-questions']}>",
             )
         )
         new_started = await rules_channel.send(
