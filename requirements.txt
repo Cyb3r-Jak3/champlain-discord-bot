@@ -1,2 +1,2 @@
-discord.py==2.1.1
+discord.py==2.2.2
 cyberjake==0.0.7
