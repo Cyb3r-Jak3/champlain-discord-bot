@@ -92,51 +92,52 @@ class Admin(commands.Cog, name="Admin"):
         :return:
         """
         await ctx.send(f"Creating roles for new club {name}")
-        new_leadership = await self.bot.guild.create_role(
+        guild = ctx.guild
+        new_leadership = await guild.create_role(
             name=f"{name.upper()} Leadership", hoist=True, mentionable=True
         )
-        await self.bot.guild.create_role(name=f"{name}-general")
-        student_role = await self.bot.get_role_from_name("student")
-        professor_role = await self.bot.get_role_from_name("professor")
-        alumni_role = await self.bot.get_role_from_name("alumni")
+        await guild.create_role(name=f"{name}-general")
+        student_role = self.bot.load_role(ctx.guild.id, "student")
+        professor_role = self.bot.load_role(ctx.guild.id, "professor")
+        alumni_role = self.bot.load_role(ctx.guild.id, "alumni")
         await ctx.send(f"Creating channels for new club {name}")
-        category = await self.bot.guild.create_category(
+        category = await guild.create_category(
             name=name,
             overwrites={
-                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+                guild.default_role: PermissionOverwrite(read_messages=False),
                 student_role: PermissionOverwrite(read_messages=True, send_messages=True),
                 professor_role: PermissionOverwrite(read_messages=True, send_messages=True),
                 alumni_role: PermissionOverwrite(read_messages=True, send_messages=True),
                 new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
             },
         )
-        await self.bot.guild.create_text_channel(
+        await guild.create_text_channel(
             name=f"{name}-leadership",
             category=category,
             overwrites={
-                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+                guild.default_role: PermissionOverwrite(read_messages=False),
                 student_role: PermissionOverwrite(read_messages=False),
                 professor_role: PermissionOverwrite(read_messages=False),
                 alumni_role: PermissionOverwrite(read_messages=False),
                 new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
             },
         )
-        await self.bot.guild.create_text_channel(
+        await guild.create_text_channel(
             name=f"{name}-announcements",
             category=category,
             overwrites={
-                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+                guild.default_role: PermissionOverwrite(read_messages=False),
                 student_role: PermissionOverwrite(send_messages=False),
                 professor_role: PermissionOverwrite(send_messages=False),
                 alumni_role: PermissionOverwrite(send_messages=False),
                 new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
             },
         )
-        await self.bot.guild.create_text_channel(
+        await guild.create_text_channel(
             name=f"{name}-general",
             category=category,
             overwrites={
-                self.bot.guild.default_role: PermissionOverwrite(read_messages=False),
+                guild.default_role: PermissionOverwrite(read_messages=False),
             },
         )
         await ctx.send(

@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM python:3.11-alpine
 
 COPY requirements.txt /tmp/pip-tmp/
 RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \

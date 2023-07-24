@@ -1,16 +1,19 @@
-# fly.toml file generated for champ-discord-bot on 2022-09-03T20:01:28-04:00
+# fly.toml app configuration file generated for champ-discord-bot on 2023-07-24T19:40:49-04:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
 
 app = "champ-discord-bot"
+primary_region = "ewr"
 kill_signal = "SIGINT"
-kill_timeout = 5
-processes = []
-
-[mounts]
-source="champ_discord"
-destination="/data"
-
-[env]
-  LOG_LEVEL="INFO"
+kill_timeout = "5s"
 
 [experimental]
   auto_rollback = true
+
+[env]
+  LOG_LEVEL = "INFO"
+
+[[mounts]]
+  source = "champ_discord"
+  destination = "/data"
