@@ -2,7 +2,7 @@
 import discord
 from discord.ext import commands
 from discord.utils import get
-from discord import RawReactionActionEvent, errors
+from discord import RawReactionActionEvent, errors, app_commands
 
 
 class ReactionRoles(commands.Cog, name="Reaction_Roles"):
@@ -44,13 +44,11 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             raise NotImplementedError
         return
 
-    @commands.command(name="refresh-reactions", hidden=True)
-    @commands.has_role("Moderator")
-    async def refresh_reaction_message(self, ctx: commands.Context, delete=True):
+    @app_commands.command(name="refresh-reactions")
+    @app_commands.checks.has_role("Moderator")
+    async def refresh_reaction_message(self, interaction: discord.Interaction):
         """Command that generates a new role reaction message and updates it in redis cache"""
-        if delete:
-            await ctx.message.delete()
-        rules_channel = self.bot.load_channel(ctx.guild.id, "rules-read-me")
+        rules_channel = self.bot.load_channel(interaction.guild.id, "rules-read-me")
         try:
             if self.bot.latest_message_ids["last_reaction"] is not None:
                 old_message = await rules_channel.fetch_message(
@@ -71,7 +69,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         with open("text/reaction_roles.txt", encoding="utf-8") as infile:
             new_message = await rules_channel.send(infile.read())
         await new_message.pin(
-            reason=f"Newest reaction role message triggered by {ctx.author.display_name}"
+            reason=f"Newest reaction role message triggered by {interaction.user.display_name}"
         )
         await self.bot.update_last_message("last_reaction", new_message.id)
         for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]:

@@ -61,7 +61,7 @@ def _get_message_id(key: str) -> Optional[int]:
         with open(f"{data_directory}/{key}", "r", encoding="utf-8") as infile:
             return int(infile.read())
     except (AttributeError, FileNotFoundError) as err:
-        log.debug("Error getting key '%s': %s", key, err)
+        log.error("Error getting key '%s': %s", key, err)
         pass
 
 
@@ -107,6 +107,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         await self.change_presence(
             activity=discord.Activity(name="?help", type=discord.ActivityType.playing)
         )
+        await self.tree.sync()
         log.info("Online")
 
     async def update_last_message(self, key: str, message_id: int):

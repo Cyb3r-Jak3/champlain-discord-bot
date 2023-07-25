@@ -1,7 +1,9 @@
 """Cogs for admin features"""
 from datetime import datetime
+from typing import List
+import discord
 from discord.ext import commands
-from discord import Embed, PermissionOverwrite
+from discord import Embed, PermissionOverwrite, app_commands
 from .reaction_roles import ReactionRoles
 from .rules_verify import RulesVerify
 
@@ -12,9 +14,9 @@ class Admin(commands.Cog, name="Admin"):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(name="reload-extension", help="reloads <extension>")
-    @commands.is_owner()
-    async def reload_extension(self, ctx: commands.Context, extension: str):
+    @app_commands.command(name="reload-extension", description="reloads <extension>")
+    @app_commands.checks.has_role("Moderator")
+    async def reload_extension(self, interaction: discord.Interaction, extension: str):
         """reload_extension
         ---
 
@@ -24,12 +26,12 @@ class Admin(commands.Cog, name="Admin"):
             ctx {discord.ext.commands.Context} -- Context of the command.
             extension {str} -- extension to reload
         """
-        self.bot.reload_extension(extension)
-        await ctx.send("Extension reloaded")
+        await self.bot.reload_extension(extension)
+        await interaction.response.send_message(f"Extension {extension} reloaded", ephemeral=True)
 
-    @commands.command(name="refresh-all", help="Refreshes both reactions and rules")
+    @app_commands.command(name="refresh-all", description="Refreshes both reactions and rules")
     @commands.has_role("Moderator")
-    async def refresh_all(self, ctx: commands.Context):
+    async def refresh_all(self, interaction: discord.Interaction):
         """Refresh_all
         refreshes both the rules and reaction message
         Parameters
@@ -37,11 +39,11 @@ class Admin(commands.Cog, name="Admin"):
             ctx {discord.ext.commands.Context} -- Context of the command.
 
         """
-        await RulesVerify.refresh_message(self, ctx=ctx, delete=False)
-        await ReactionRoles.refresh_reaction_message(self, ctx=ctx, delete=False)
+        await RulesVerify.refresh_message(self, interaction=interaction)
+        await ReactionRoles.refresh_reaction_message(self, interaction=interaction)
 
-    @commands.command(name="uptime", help="Gets uptime of bot")
-    async def uptime(self, ctx: commands.Context):
+    @app_commands.command(name="uptime", description="Gets uptime of bot")
+    async def uptime(self, interaction: discord.Interaction):
         """Uptime
         ---
         Arguments:
@@ -60,47 +62,67 @@ class Admin(commands.Cog, name="Admin"):
 
         start_time = self.bot.uptime.strftime("%Y-%m-%d %H:%M")
         description = f"Bot has been online since {start_time} UTC"
-        await ctx.send(
-            embed=Embed(title=uptime_msg, timestamp=ctx.message.created_at, description=description)
+        await interaction.response.send_message(
+            embed=Embed(
+                title=uptime_msg, timestamp=interaction.message.created_at, description=description
+            )
         )
 
-    @commands.command(name="set-message", help="Manually set a message key")
-    @commands.is_owner()
-    async def manual_message_set(self, ctx: commands.Context, key: str, value: str):
+    @app_commands.command(name="set-message", description="Manually set a message key")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def manual_message_set(self, interaction: discord.Interaction, key: str, value: str):
         if key not in self.bot.latest_message_ids.keys():
-            return await ctx.send(f"Key {key} is not valid")
+            return await interaction.response.send_message(f"Key {key} is not valid", ephemeral=True)
         await self.bot.update_last_message(key, value)
-        await ctx.send(f"Key: `{key}` has been set to **{value}**")
+        await interaction.response.send_message(
+            f"Key: `{key}` has been set to **{value}**", ephemeral=True
+        )
 
-    @commands.command(name="get-message", help="Get a message key")
-    @commands.is_owner()
-    async def manual_message_get(self, ctx: commands.Context, key: str):
-        if key not in self.bot.latest_message_ids.keys():
-            return await ctx.send(f"Key {key} is not valid")
+    @app_commands.command(name="get-message", description="Get a message key")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def manual_message_get(self, interaction: discord.Interaction, key: str):
+        if key not in list(self.bot.latest_message_ids.keys()) + ["all"]:
+            return await interaction.response.send_message(f"Key {key} is not valid", ephemeral=True)
+        if key == "all":
+            embed = discord.Embed(title="All message keys", color=discord.Color.blue())
+            for key, value in self.bot.latest_message_ids.items():
+                embed.add_field(name=key, value=value, inline=False)
+            return await interaction.response.send_message(embed=embed, ephemeral=True)
         value = await self.bot.get_last_message(key)
-        await ctx.send(f"Key: `{key}`: **{value}**")
+        await interaction.response.send_message(f"Key: `{key}`: **{value}**", ephemeral=True)
 
-    @commands.command(name="create-club", help="Create a new club")
-    @commands.has_role("Moderator")
-    async def create_club(self, ctx: commands.Context, name: str):
+    @manual_message_get.autocomplete("key")
+    async def manual_message_set_autocomplete(
+        self, _: discord.Interaction, current: str
+    ) -> List[app_commands.Choice[str]]:
+        return [
+            app_commands.Choice(name=key, value=key)
+            for key in list(self.bot.latest_message_ids.keys()) + ["all"]
+            if current.lower() in key.lower()
+        ]
+
+    @app_commands.command(name="create-club", description="Create a new club")
+    @app_commands.checks.has_permissions(administrator=True)
+    async def create_club(self, interaction: discord.Interaction, name: str):
         """
         Creates a new club from the name provided
 
+        :param interaction:
         :param name: Name of the club to make
-        :param ctx: Context of the command.
-        :type ctx: {discord.ext.commands.Context}
         :return:
         """
-        await ctx.send(f"Creating roles for new club {name}")
-        guild = ctx.guild
+        await interaction.response.send_message(
+            f"Creating roles for new club {name}", ephemeral=True
+        )
+        guild = interaction.guild
         new_leadership = await guild.create_role(
             name=f"{name.upper()} Leadership", hoist=True, mentionable=True
         )
         await guild.create_role(name=f"{name}-general")
-        student_role = self.bot.load_role(ctx.guild.id, "student")
-        professor_role = self.bot.load_role(ctx.guild.id, "professor")
-        alumni_role = self.bot.load_role(ctx.guild.id, "alumni")
-        await ctx.send(f"Creating channels for new club {name}")
+        student_role = self.bot.load_role(guild.id, "student")
+        professor_role = self.bot.load_role(guild.id, "professor")
+        alumni_role = self.bot.load_role(guild.id, "alumni")
+        await interaction.followup.send_message(f"Creating channels for new club {name}")
         category = await guild.create_category(
             name=name,
             overwrites={
@@ -140,8 +162,8 @@ class Admin(commands.Cog, name="Admin"):
                 guild.default_role: PermissionOverwrite(read_messages=False),
             },
         )
-        await ctx.send(
-            "All roles and channels have been created.\n"
+        await interaction.edit_original_response(
+            content="All roles and channels have been created.\n"
             "Still to do:\n"
             "  - Change color of new leadership role\n"
             "  - Update the reaction roles to include the new club"
