@@ -82,7 +82,9 @@ class Admin(commands.Cog, name="Admin"):
     @app_commands.checks.has_permissions(administrator=True)
     async def manual_message_get(self, interaction: discord.Interaction, message_key: str):
         if message_key not in list(self.bot.latest_message_ids.keys()) + ["all"]:
-            return await interaction.response.send_message(f"Key {message_key} is not valid", ephemeral=True)
+            return await interaction.response.send_message(
+                f"Key {message_key} is not valid", ephemeral=True
+            )
         if message_key == "all":
             embed = discord.Embed(title="All message keys", color=discord.Color.blue())
             for key, value in self.bot.latest_message_ids.items():
