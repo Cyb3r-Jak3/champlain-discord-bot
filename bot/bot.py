@@ -5,6 +5,7 @@ from datetime import datetime
 from typing import Optional
 
 import discord
+from discord import app_commands
 from discord.ext import commands
 from log_maker import make_logger
 
@@ -104,10 +105,10 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
                 self.log.error("Failed to load extension %s. %s", extension, e)
         for guild in self.guilds:
             self.load_guild_info(guild)
+            await self.tree.sync(guild=guild)
         await self.change_presence(
             activity=discord.Activity(name="?help", type=discord.ActivityType.playing)
         )
-        await self.tree.sync()
         log.info("Online")
 
     async def update_last_message(self, key: str, message_id: int):

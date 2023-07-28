@@ -30,7 +30,7 @@ class Admin(commands.Cog, name="Admin"):
         await interaction.response.send_message(f"Extension {extension} reloaded", ephemeral=True)
 
     @app_commands.command(name="refresh-all", description="Refreshes both reactions and rules")
-    @app_commands.has_role("Moderator")
+    @app_commands.checks.has_role("Moderator")
     async def refresh_all(self, interaction: discord.Interaction):
         """Refresh_all
         refreshes both the rules and reaction message
@@ -94,7 +94,7 @@ class Admin(commands.Cog, name="Admin"):
         value = await self.bot.get_last_message(message_key)
         await interaction.response.send_message(f"Key: `{message_key}`: **{value}**", ephemeral=True)
 
-    @manual_message_get.autocomplete("key")
+    @manual_message_get.autocomplete("message_key")
     async def manual_message_set_autocomplete(
         self, _: discord.Interaction, current: str
     ) -> List[app_commands.Choice[str]]:
