@@ -80,16 +80,16 @@ class Admin(commands.Cog, name="Admin"):
 
     @app_commands.command(name="get-message", description="Get a message key")
     @app_commands.checks.has_permissions(administrator=True)
-    async def manual_message_get(self, interaction: discord.Interaction, key: str):
-        if key not in list(self.bot.latest_message_ids.keys()) + ["all"]:
-            return await interaction.response.send_message(f"Key {key} is not valid", ephemeral=True)
-        if key == "all":
+    async def manual_message_get(self, interaction: discord.Interaction, message_key: str):
+        if message_key not in list(self.bot.latest_message_ids.keys()) + ["all"]:
+            return await interaction.response.send_message(f"Key {message_key} is not valid", ephemeral=True)
+        if message_key == "all":
             embed = discord.Embed(title="All message keys", color=discord.Color.blue())
             for key, value in self.bot.latest_message_ids.items():
                 embed.add_field(name=key, value=value, inline=False)
             return await interaction.response.send_message(embed=embed, ephemeral=True)
-        value = await self.bot.get_last_message(key)
-        await interaction.response.send_message(f"Key: `{key}`: **{value}**", ephemeral=True)
+        value = await self.bot.get_last_message(message_key)
+        await interaction.response.send_message(f"Key: `{message_key}`: **{value}**", ephemeral=True)
 
     @manual_message_get.autocomplete("key")
     async def manual_message_set_autocomplete(
