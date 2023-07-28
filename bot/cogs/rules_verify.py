@@ -2,13 +2,16 @@
 from discord.ext import commands
 from discord import app_commands
 import discord
+from typing import Tuple
 
 
-with open("text/rules.txt", "r", encoding="utf-8") as f:
-    rules = f.read()
-
-with open("text/getting_started.txt", "r", encoding="utf-8") as f:
-    getting_started = f.read()
+def load_files() -> Tuple[str, str]:
+    """Loads the rules and getting started files"""
+    with open("text/rules.txt", "r", encoding="utf-8") as f:
+        rules = f.read()
+    with open("text/getting_started.txt", "r", encoding="utf-8") as f:
+        getting_started = f.read()
+    return rules, getting_started
 
 
 class RulesVerify(commands.Cog, name="Rules_Verify"):
@@ -22,6 +25,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         """Sends user the rules when they join"""
         self.bot.log.debug("User: %s joined", member.name)
         accepted_rules_role = self.bot.load_role(member.guild.id, "role-request")
+        rules, getting_started = load_files()
         await member.add_roles(accepted_rules_role, reason="User joined")
         await member.send(
             rules.format(
@@ -65,6 +69,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
             self.bot.log.error(err)
 
         guild_info = self.bot.guild_info[interaction.guild.id]
+        rules, getting_started = load_files()
         new_message = await rules_channel.send(
             rules.format(
                 mod_role=f"<@&{guild_info['roles']['moderator']}>",
