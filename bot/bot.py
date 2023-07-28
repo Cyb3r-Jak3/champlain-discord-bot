@@ -42,7 +42,7 @@ def _set_last_message_id(key: str, message: int) -> None:
     message The message id of the key
 
     """
-    if key not in total_ids().keys():
+    if key not in total_ids():
         return None
     with open(f"{data_directory}/{key}", "w+", encoding="utf-8") as outfile:
         outfile.write(str(message))
