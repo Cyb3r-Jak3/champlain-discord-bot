@@ -63,9 +63,7 @@ class Admin(commands.Cog, name="Admin"):
         start_time = self.bot.uptime.strftime("%Y-%m-%d %H:%M")
         description = f"Bot has been online since {start_time} UTC"
         await interaction.response.send_message(
-            embed=Embed(
-                title=uptime_msg, timestamp=interaction.message.created_at, description=description
-            ),
+            embed=Embed(title=uptime_msg, timestamp=interaction.created_at, description=description),
             ephemeral=True,
         )
 
