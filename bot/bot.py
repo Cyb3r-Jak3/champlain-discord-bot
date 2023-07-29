@@ -21,7 +21,7 @@ description = (
     "Source: https://github.com/Cyb3r-Jak3/champlain-discord-bot"
 )
 with open("./text/info.json", encoding="utf-8") as f:
-    guild_info = json.load(f)
+    base_guild_info = json.load(f)
 
 
 def total_ids() -> dict:
@@ -67,14 +67,16 @@ def _get_message_id(key: str) -> Optional[int]:
 
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     def __init__(self):
-        super().__init__(command_prefix="?", intents=intents, description=description)
+        super().__init__(
+            command_prefix="??", intents=intents, description=description, help_command=None
+        )
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
         self.log = log
         self.guild_info: dict = {}
 
     def load_guild_info(self, guild: discord.Guild):
-        new_copy = guild_info.copy()
+        new_copy = base_guild_info.copy()
         try:
             for role in new_copy["roles"].keys():
                 new_copy["roles"][role] = discord.utils.find(
@@ -103,12 +105,14 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
             except commands.ExtensionError as e:
                 self.log.error("Failed to load extension %s. %s", extension, e)
         for guild in self.guilds:
+            synced = await self.tree.sync(guild=guild)
+            for x in synced:
+                self.log.info("Synced %s guild %s", x, guild.name)
             self.load_guild_info(guild)
-            await self.tree.sync(guild=guild)
         await self.change_presence(
-            activity=discord.Activity(name="?help", type=discord.ActivityType.playing)
+            activity=discord.Activity(name="/uptime", type=discord.ActivityType.playing)
         )
-        log.info("Online")
+        self.log.info("Online")
 
     async def update_last_message(self, key: str, message_id: int):
         """

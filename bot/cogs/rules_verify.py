@@ -68,7 +68,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         ) as err:
             self.bot.log.error(err)
 
-        guild_info = self.bot.guild_info[interaction.guild.id]
+        guild_info = self.bot.base_guild_info[interaction.guild.id]
         rules, getting_started = load_files()
         new_message = await rules_channel.send(
             rules.format(

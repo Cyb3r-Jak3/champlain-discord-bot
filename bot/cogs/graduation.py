@@ -38,10 +38,10 @@ class GraduationCog(commands.Cog, name="Graduation"):
         member: discord.Member = guild.get_member(payload.user_id)
         if payload.message_id != self.bot.latest_message_ids["last_graduation"] or member.bot:
             return
-        student_role = get(guild.roles, id=self.bot.guild_info[guild.id]["roles"]["student"])
+        student_role = get(guild.roles, id=self.bot.base_guild_info[guild.id]["roles"]["student"])
         if str(payload.emoji) != "🥳" or student_role not in member.roles:
             return
-        alum_role = get(guild.roles, id=self.bot.guild_info[guild.id]["roles"]["alumni"])
+        alum_role = get(guild.roles, id=self.bot.base_guild_info[guild.id]["roles"]["alumni"])
         await member.remove_roles(student_role, reason="Graduation!")
         await member.add_roles(alum_role, reason="Graduation!")
 
