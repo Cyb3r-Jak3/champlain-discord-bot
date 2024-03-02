@@ -63,7 +63,6 @@ def _get_message_id(key: str) -> Optional[int]:
             return int(infile.read())
     except (AttributeError, FileNotFoundError) as err:
         log.error("Error getting key '%s': %s", key, err)
-        pass
 
 
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
@@ -77,25 +76,31 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         self.guild_info: dict = {}
 
     def load_guild_info(self, guild: discord.Guild):
+        """Loads the guild info from the base_guild_info file
+        and updates it with the guild's info."""
         new_copy = base_guild_info.copy()
-        try:
-            for role in new_copy["roles"].keys():
+        for role in new_copy["roles"].keys():
+            try:
                 new_copy["roles"][role] = discord.utils.find(
                     lambda r: r.name.lower() == role, guild.roles  # skipcq: PYL-W0640
                 ).id
-            for channel in new_copy["channels"]:
+            except AttributeError as err:
+                log.error("Error loading role '%s' for guild %s: %s", role, guild.name, err)
+        for channel in new_copy["channels"]:
+            try:
                 new_copy["channels"][channel] = discord.utils.find(
                     lambda c: c.name.lower() == channel, guild.channels  # skipcq: PYL-W0640
                 ).id
-            self.guild_info[guild.id] = new_copy
-        except AttributeError as err:
-            log.error("Error loading guild info for '%s': %s", guild.name, err)
-            pass
+            except AttributeError as err:
+                log.error("Error loading channel '%s' for guild %s: %s", channel, guild.name, err)
+        self.guild_info[guild.id] = new_copy
 
     def load_channel(self, guild: int, name: str) -> discord.TextChannel:
+        """Loads the channel from the guild info"""
         return self.get_channel(self.guild_info[guild]["channels"][name])
 
     def load_role(self, guild: int, name: str) -> discord.Role:
+        """Loads the role from the guild info"""
         return self.get_guild(guild).get_role(self.guild_info[guild]["roles"][name])
 
     async def on_ready(self):
