@@ -1,4 +1,5 @@
 """Cog for dealing with graduations time"""
+
 import cyberjake
 import discord
 from discord.ext import commands
