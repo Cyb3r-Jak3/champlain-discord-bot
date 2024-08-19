@@ -1,5 +1,0 @@
--r requirements.txt
-bandit == 1.7.6
-black == 24.2.0
-pylint == 3.1.0
-flake8 == 7.0.0

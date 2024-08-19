@@ -1,12 +1,21 @@
+FROM python:3.10-alpine AS builder
+
+RUN pip install --no-cache-dir poetry
+
+WORKDIR /app
+
+COPY pyproject.toml poetry.lock ./
+
+RUN poetry export -f requirements.txt --without-hashes -o requirements.txt
+
 FROM ghcr.io/cyb3r-jak3/alpine-pypy:3.10-7.3.15-3.19
 
-COPY requirements.txt /tmp/pip-tmp/
-RUN pip --disable-pip-version-check --no-cache-dir install -r /tmp/pip-tmp/requirements.txt \
-    && rm -rf /tmp/pip-tmp
+COPY --from=builder /app/requirements.txt /app/requirements.txt
 
+RUN --mount=type=cache,target=/root/.cache/pip pip install -r /app/requirements.txt
 
-COPY bot /usr/src/app/
-COPY text /usr/src/app/text
-WORKDIR /usr/src/app
+COPY bot /app/
+COPY text /app/text
+WORKDIR /app
 
 CMD [ "python", "bot.py"]

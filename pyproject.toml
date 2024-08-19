@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "champlain-discord-bot"
+version = "0.1.0"
+description = "Discord bot to manage Champlain's Discord Server"
+authors = ["Cyb3r-Jak3 <git@Cyberjake.xyz>"]
+license = "MPL-2.0"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+"discord.py" = "^2.4.0"
+cyberjake = "^0.1.0"
+
+
+[tool.poetry.group.dev.dependencies]
+bandit = "^1.7.9"
+black = "^24.8.0"
+pylint = "^3.2.6"
+flake8 = "^7.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
