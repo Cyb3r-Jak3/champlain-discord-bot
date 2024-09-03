@@ -8,7 +8,7 @@ COPY pyproject.toml poetry.lock ./
 
 RUN poetry export -f requirements.txt --without-hashes -o requirements.txt
 
-FROM ghcr.io/cyb3r-jak3/alpine-pypy:3.10-7.3.15-3.19
+FROM ghcr.io/cyb3r-jak3/alpine-pypy:3.10-7.3.17-3.20
 
 COPY --from=builder /app/requirements.txt /app/requirements.txt
 

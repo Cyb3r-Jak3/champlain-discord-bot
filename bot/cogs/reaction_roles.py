@@ -33,8 +33,13 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
                 role = get(guild.roles, name="math-club-general")
             case "7️⃣":
                 role = get(guild.roles, name="doc-general")
+            case "8️⃣":
+                role = get(guild.roles, name="wicys-general")
             case _:
                 return
+        if role is None:
+            self.bot.log.error("Role not found")
+            return
         if action == "add":
             self.bot.log.debug("Adding %s to %s", role.name, user.name)
             await user.add_roles(role, reason="Reaction Roles")
@@ -73,7 +78,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             reason=f"Newest reaction role message triggered by {interaction.user.display_name}"
         )
         await self.bot.update_last_message("last_reaction", new_message.id)
-        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣"]:
+        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"]:
             await new_message.add_reaction(reaction)
 
     @commands.Cog.listener()
