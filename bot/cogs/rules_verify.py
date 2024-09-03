@@ -48,6 +48,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     @app_commands.checks.has_role("Moderator")
     async def refresh_message(self, interaction: discord.Interaction):
         """Refreshes the rules message"""
+        await interaction.response.defer()
         rules_channel = self.bot.load_channel(interaction.guild.id, "rules-read-me")
         try:
             old_rules = await rules_channel.fetch_message(self.bot.latest_message_ids["last_rules"])

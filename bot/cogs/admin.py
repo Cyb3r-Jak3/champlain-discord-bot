@@ -51,6 +51,7 @@ class Admin(commands.Cog, name="Admin"):
         ---
             ctx {discord.ext.commands.Context} -- Context of the command.
         """
+        await interaction.response.defer()
         uptime = datetime.utcnow() - self.bot.uptime
         uptime_msg = (
             ":clock1: Days: {}, Hours: {}, Minutes: {}, Seconds: {}".format(  # pylint: disable=C0209

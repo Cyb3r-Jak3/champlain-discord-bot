@@ -54,6 +54,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     @app_commands.checks.has_role("Moderator")
     async def refresh_reaction_message(self, interaction: discord.Interaction):
         """Command that generates a new role reaction message and updates it in redis cache"""
+        await interaction.response.defer()
         rules_channel = self.bot.load_channel(interaction.guild.id, "rules-read-me")
         try:
             if self.bot.latest_message_ids["last_reaction"] is not None:
@@ -72,6 +73,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             errors.NotFound,
         ) as err:
             self.bot.log.error(err)
+            return
         with open("text/reaction_roles.txt", encoding="utf-8") as infile:
             new_message = await rules_channel.send(infile.read())
         await new_message.pin(
