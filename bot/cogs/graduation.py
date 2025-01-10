@@ -1,17 +1,21 @@
 """Cog for dealing with graduations time"""
 
+from typing import TYPE_CHECKING
 import cyberjake
 import discord
 from discord.ext import commands
 from discord.utils import get
 from discord import RawReactionActionEvent, app_commands
 
+if TYPE_CHECKING:
+    from bot.bot import Discord_Bot
+
 
 class GraduationCog(commands.Cog, name="Graduation"):
     """Cog that deals with graduation message"""
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: "Discord_Bot" = bot
 
     @app_commands.command(name="set-graduation", description="Sets the graduation message")
     @app_commands.checks.has_role("Moderator")

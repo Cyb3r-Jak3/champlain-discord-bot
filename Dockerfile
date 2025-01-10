@@ -1,12 +1,13 @@
 FROM python:3.10-alpine AS builder
 
-RUN pip install --no-cache-dir poetry
+RUN pip install --no-cache-dir poetry==2.0.0
 
 WORKDIR /app
 
 COPY pyproject.toml poetry.lock ./
 
-RUN poetry export -f requirements.txt --without-hashes -o requirements.txt
+RUN poetry self add poetry-plugin-export && \
+    poetry export -f requirements.txt --without-hashes -o requirements.txt
 
 FROM ghcr.io/cyb3r-jak3/alpine-pypy:3.10-7.3.17-3.20
 

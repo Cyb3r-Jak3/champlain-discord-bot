@@ -3,7 +3,10 @@
 from discord.ext import commands
 from discord import app_commands
 import discord
-from typing import Tuple
+from typing import Tuple, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from bot.bot import Discord_Bot
 
 
 def load_files() -> Tuple[str, str]:
@@ -19,7 +22,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     """Cogs for rules verifying"""
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: "Discord_Bot" = bot
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):

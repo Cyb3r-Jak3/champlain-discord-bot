@@ -1,16 +1,20 @@
 """Cog for reaction roles"""
 
+from typing import TYPE_CHECKING
 import discord
 from discord.ext import commands
 from discord.utils import get
 from discord import RawReactionActionEvent, errors, app_commands
+
+if TYPE_CHECKING:
+    from bot.bot import Discord_Bot
 
 
 class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     """Cogs for reaction roles"""
 
     def __init__(self, bot):
-        self.bot = bot
+        self.bot: Discord_Bot = bot
 
     async def role_action(self, payload: RawReactionActionEvent, action: str) -> None:
         """Performs a role action (add or remove) on a user"""
@@ -35,6 +39,8 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
                 role = get(guild.roles, name="doc-general")
             case "8️⃣":
                 role = get(guild.roles, name="wicys-general")
+            case "9️⃣":
+                role = get(guild.roles, name="cis-officers")
             case _:
                 return
         if role is None:
@@ -54,7 +60,6 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
     @app_commands.checks.has_role("Moderator")
     async def refresh_reaction_message(self, interaction: discord.Interaction):
         """Command that generates a new role reaction message and updates it in redis cache"""
-        await interaction.response.defer()
         rules_channel = self.bot.load_channel(interaction.guild.id, "rules-read-me")
         try:
             if self.bot.latest_message_ids["last_reaction"] is not None:
@@ -80,7 +85,7 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
             reason=f"Newest reaction role message triggered by {interaction.user.display_name}"
         )
         await self.bot.update_last_message("last_reaction", new_message.id)
-        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣"]:
+        for reaction in ["1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "6️⃣", "7️⃣", "8️⃣", "9️⃣"]:
             await new_message.add_reaction(reaction)
 
     @commands.Cog.listener()

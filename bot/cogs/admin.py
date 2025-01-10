@@ -1,23 +1,27 @@
 """Cogs for admin features"""
 
 from datetime import datetime
-from typing import List
+from typing import List, TYPE_CHECKING
 import discord
 from discord.ext import commands
-from discord import Embed, PermissionOverwrite, app_commands
-from .reaction_roles import ReactionRoles
-from .rules_verify import RulesVerify
+from discord import Embed, PermissionOverwrite, app_commands, Interaction
+
+# from .reaction_roles import ReactionRoles
+# from .rules_verify import RulesVerify
+
+if TYPE_CHECKING:
+    from bot.bot import Discord_Bot
 
 
 class Admin(commands.Cog, name="Admin"):
     """Cogs for admin commands"""
 
-    def __init__(self, bot):
-        self.bot = bot
+    def __init__(self, bot: "Discord_Bot"):
+        self.bot: "Discord_Bot" = bot
 
     @app_commands.command(name="reload-extension", description="reloads <extension>")
     @app_commands.checks.has_role("Moderator")
-    async def reload_extension(self, interaction: discord.Interaction, extension: str):
+    async def reload_extension(self, interaction: Interaction, extension: str):
         """reload_extension
         ---
 
@@ -27,31 +31,39 @@ class Admin(commands.Cog, name="Admin"):
             ctx {discord.ext.commands.Context} -- Context of the command.
             extension {str} -- extension to reload
         """
+
+        if not extension.startswith("cogs."):
+            extension = f"cogs.{extension}"
+        if extension.endswith(".py"):
+            extension = extension[:-3]
+        if extension not in self.bot.extensions:
+            return await interaction.response.send_message(
+                f"Extension {extension} not found", ephemeral=True
+            )
         await self.bot.reload_extension(extension)
         await interaction.response.send_message(f"Extension {extension} reloaded", ephemeral=True)
 
-    @app_commands.command(name="refresh-all", description="Refreshes both reactions and rules")
-    @app_commands.checks.has_role("Moderator")
-    async def refresh_all(self, interaction: discord.Interaction):
-        """Refresh_all
-        refreshes both the rules and reaction message
-        Parameters
-        ----------
-            ctx {discord.ext.commands.Context} -- Context of the command.
-
-        """
-        await RulesVerify.refresh_message(self, interaction=interaction)
-        await ReactionRoles.refresh_reaction_message(self, interaction=interaction)
+    # @app_commands.command(name="refresh-all", description="Refreshes both reactions and rules")
+    # @app_commands.checks.has_role("Moderator")
+    # async def refresh_all(self, interaction: Interaction):
+    #     """Refresh_all
+    #     refreshes both the rules and reaction message
+    #     Parameters
+    #     ----------
+    #         ctx {discord.ext.commands.Context} -- Context of the command.
+    #
+    #     """
+    #     await RulesVerify.refresh_message(self, interaction=interaction)
+    #     await ReactionRoles.refresh_reaction_message(self, interaction=interaction)
 
     @app_commands.command(name="uptime", description="Gets uptime of bot")
-    async def uptime(self, interaction: discord.Interaction):
+    async def uptime(self, interaction: Interaction):
         """Uptime
         ---
         Arguments:
         ---
             ctx {discord.ext.commands.Context} -- Context of the command.
         """
-        await interaction.response.defer()
         uptime = datetime.utcnow() - self.bot.uptime
         uptime_msg = (
             ":clock1: Days: {}, Hours: {}, Minutes: {}, Seconds: {}".format(  # pylint: disable=C0209
@@ -105,7 +117,7 @@ class Admin(commands.Cog, name="Admin"):
         ]
 
     @app_commands.command(name="create-club", description="Create a new club")
-    @app_commands.checks.has_permissions(administrator=True)
+    @app_commands.checks.has_role("Moderator")
     async def create_club(self, interaction: discord.Interaction, name: str):
         """
         Creates a new club from the name provided
@@ -114,9 +126,7 @@ class Admin(commands.Cog, name="Admin"):
         :param name: Name of the club to make
         :return:
         """
-        await interaction.response.send_message(
-            f"Creating roles for new club {name}", ephemeral=True
-        )
+        await interaction.response.send_message(f"Creating roles for new club {name}")
         guild = interaction.guild
         new_leadership = await guild.create_role(
             name=f"{name.upper()} Leadership", hoist=True, mentionable=True
@@ -125,7 +135,9 @@ class Admin(commands.Cog, name="Admin"):
         student_role = self.bot.load_role(guild.id, "student")
         professor_role = self.bot.load_role(guild.id, "professor")
         alumni_role = self.bot.load_role(guild.id, "alumni")
-        await interaction.followup.send_message(f"Creating channels for new club {name}")
+        start_message = await interaction.followup.send(
+            f"Creating channels for new club {name}", wait=True
+        )
         category = await guild.create_category(
             name=name,
             overwrites={
@@ -134,6 +146,9 @@ class Admin(commands.Cog, name="Admin"):
                 professor_role: PermissionOverwrite(read_messages=True, send_messages=True),
                 alumni_role: PermissionOverwrite(read_messages=True, send_messages=True),
                 new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
+                self.bot.bot_roles[guild.id]: PermissionOverwrite(
+                    read_messages=True, send_messages=True, manage_channels=True
+                ),
             },
         )
         await guild.create_text_channel(
@@ -165,6 +180,7 @@ class Admin(commands.Cog, name="Admin"):
                 guild.default_role: PermissionOverwrite(read_messages=False),
             },
         )
+        await start_message.delete()
         await interaction.edit_original_response(
             content="All roles and channels have been created.\n"
             "Still to do:\n"

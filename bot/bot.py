@@ -4,6 +4,7 @@ import json
 import os
 from datetime import datetime
 from typing import Optional
+import sys
 
 import discord
 from discord.ext import commands
@@ -23,6 +24,12 @@ description = (
 )
 with open("./text/info.json", encoding="utf-8") as f:
     base_guild_info = json.load(f)
+
+log.debug(
+    "Using discord.py version: %s and Python version %s",
+    discord.__version__,
+    sys.version[0:5],
+)
 
 
 def total_ids() -> dict:
@@ -68,17 +75,19 @@ def _get_message_id(key: str) -> Optional[int]:
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     def __init__(self):
         super().__init__(
-            command_prefix="??", intents=intents, description=description, help_command=None
+            command_prefix="?", intents=intents, description=description, help_command=None
         )
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
         self.log = log
         self.guild_info: dict = {}
+        self.bot_roles: dict[int, discord.Role] = {}
 
     def load_guild_info(self, guild: discord.Guild):
         """Loads the guild info from the base_guild_info file
         and updates it with the guild's info."""
         new_copy = base_guild_info.copy()
+        self.bot_roles[guild.id] = discord.utils.get(guild.roles, name=self.user.name)
         for role in new_copy["roles"].keys():
             try:
                 new_copy["roles"][role] = discord.utils.find(
@@ -108,16 +117,17 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         for extension in initial_extensions:
             try:
                 await self.load_extension(extension)
+                self.log.info("Loaded extension %s", extension)
             except commands.ExtensionError as e:
                 self.log.error("Failed to load extension %s. %s", extension, e)
+        self.log.info("Logged in as %s", self.user)
         for guild in self.guilds:
-            synced = await self.tree.sync(guild=guild)
-            for x in synced:
-                self.log.info("Synced %s guild %s", x, guild.name)
+            self.log.info("Loading guild info for %s", guild.name)
             self.load_guild_info(guild)
         await self.change_presence(
             activity=discord.Activity(name="/uptime", type=discord.ActivityType.playing)
         )
+        await self.tree.sync()
         self.log.info("Online")
 
     async def update_last_message(self, key: str, message_id: int):
