@@ -1,23 +1,22 @@
-[tool.poetry]
+[project]
+authors = [
+    {name = "Cyb3r-Jak3", email = "git@Cyberjake.xyz"},
+]
+license = {text = "MPL-2.0"}
+requires-python = "<4.0,>=3.13"
+dependencies = [
+    "discord-py==2.5.2",
+    "cyberjake<1.0.0,>=0.1.0",
+]
 name = "champlain-discord-bot"
 version = "0.1.0"
 description = "Discord bot to manage Champlain's Discord Server"
-authors = ["Cyb3r-Jak3 <git@Cyberjake.xyz>"]
-license = "MPL-2.0"
 readme = "README.md"
 
-[tool.poetry.dependencies]
-python = "^3.10"
-"discord.py" = "^2.4.0"
-cyberjake = "^0.1.0"
+[dependency-groups]
+dev = [
+    "ruff>=0.11.11",
+]
 
-
-[tool.poetry.group.dev.dependencies]
-bandit = "^1.7.9"
-black = "^24.8.0"
-pylint = "^3.2.6"
-flake8 = "^7.1.1"
-
-[build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "S", "PLC"]
