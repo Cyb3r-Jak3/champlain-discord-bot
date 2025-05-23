@@ -54,7 +54,9 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         await interaction.response.defer()
         rules_channel = self.bot.load_channel(interaction.guild.id, "rules-read-me")
         try:
-            old_rules = await rules_channel.fetch_message(self.bot.latest_message_ids["last_rules"])
+            old_rules = await rules_channel.fetch_message(
+                self.bot.latest_message_ids["last_rules"]
+            )
             if old_rules is None:
                 self.bot.log.warning("There is no old rules message")
             else:

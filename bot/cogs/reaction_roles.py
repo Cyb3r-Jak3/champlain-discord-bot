@@ -20,7 +20,10 @@ class ReactionRoles(commands.Cog, name="Reaction_Roles"):
         """Performs a role action (add or remove) on a user"""
         guild: discord.Guild = self.bot.get_guild(payload.guild_id)
         user = guild.get_member(payload.user_id)
-        if payload.message_id != self.bot.latest_message_ids["last_reaction"] or user.bot:
+        if (
+            payload.message_id != self.bot.latest_message_ids["last_reaction"]
+            or user.bot
+        ):
             return
         match str(payload.emoji):
             case "1️⃣":

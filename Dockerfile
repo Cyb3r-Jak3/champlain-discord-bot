@@ -1,22 +1,18 @@
-FROM python:3.10-alpine AS builder
+FROM ghcr.io/astral-sh/uv:0.7.7-python3.13-alpine AS builder
 
-RUN pip install --no-cache-dir poetry==2.0.0
+ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
 WORKDIR /app
 
-COPY pyproject.toml poetry.lock ./
+RUN --mount=type=cache,target=/root/.cache/uv \
+    --mount=type=bind,source=uv.lock,target=uv.lock \
+    --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
+    uv sync --locked --no-install-project --no-dev
 
-RUN poetry self add poetry-plugin-export && \
-    poetry export -f requirements.txt --without-hashes -o requirements.txt
-
-FROM ghcr.io/cyb3r-jak3/alpine-pypy:3.10-7.3.17-3.20
-
-COPY --from=builder /app/requirements.txt /app/requirements.txt
-
-RUN --mount=type=cache,target=/root/.cache/pip pip install -r /app/requirements.txt
 
 COPY bot /app/
 COPY text /app/text
-WORKDIR /app
+
+ENV PATH="/app/.venv/bin:$PATH"
 
 CMD [ "python", "bot.py"]

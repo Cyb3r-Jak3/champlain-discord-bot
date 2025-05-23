@@ -14,7 +14,12 @@ TOKEN = os.environ["DISCORD_TOKEN"]
 log = make_logger("Champlain Discord", os.getenv("LOG_LEVEL", "INFO"))
 data_directory = os.getenv("DATA_DIR", "/data")
 
-initial_extensions = ["cogs.rules_verify", "cogs.reaction_roles", "cogs.admin", "cogs.graduation"]
+initial_extensions = [
+    "cogs.rules_verify",
+    "cogs.reaction_roles",
+    "cogs.admin",
+    "cogs.graduation",
+]
 intents = discord.Intents.default()
 intents.message_content = True
 intents.members = True
@@ -75,7 +80,10 @@ def _get_message_id(key: str) -> Optional[int]:
 class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
     def __init__(self):
         super().__init__(
-            command_prefix="?", intents=intents, description=description, help_command=None
+            command_prefix="?",
+            intents=intents,
+            description=description,
+            help_command=None,
         )
         self.uptime = datetime.utcnow()
         self.latest_message_ids = total_ids()
@@ -91,17 +99,26 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         for role in new_copy["roles"].keys():
             try:
                 new_copy["roles"][role] = discord.utils.find(
-                    lambda r: r.name.lower() == role, guild.roles  # skipcq: PYL-W0640
+                    lambda r: r.name.lower() == role,
+                    guild.roles,  # skipcq: PYL-W0640
                 ).id
             except AttributeError as err:
-                log.error("Error loading role '%s' for guild %s: %s", role, guild.name, err)
+                log.error(
+                    "Error loading role '%s' for guild %s: %s", role, guild.name, err
+                )
         for channel in new_copy["channels"]:
             try:
                 new_copy["channels"][channel] = discord.utils.find(
-                    lambda c: c.name.lower() == channel, guild.channels  # skipcq: PYL-W0640
+                    lambda c: c.name.lower() == channel,
+                    guild.channels,  # skipcq: PYL-W0640
                 ).id
             except AttributeError as err:
-                log.error("Error loading channel '%s' for guild %s: %s", channel, guild.name, err)
+                log.error(
+                    "Error loading channel '%s' for guild %s: %s",
+                    channel,
+                    guild.name,
+                    err,
+                )
         self.guild_info[guild.id] = new_copy
 
     def load_channel(self, guild: int, name: str) -> discord.TextChannel:

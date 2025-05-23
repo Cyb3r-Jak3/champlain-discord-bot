@@ -1,10 +1,8 @@
 PHONY: lint
 
 lint:
-	pylint --disable=R1710,C0209,W0640 ./bot
-	flake8 ./bot --max-line-length 101 --statistics --show-source --count
-	bandit -r ./bot
-	black --check --line-length 101 --target-version py311 ./bot
+	uv run ruff check --target-version py313 ./bot
+	uv run ruff format --check --target-version py313 ./bot
 
 format:
-	black --line-length 101 --target-version py311 ./bot
+	uv run ruff format --target-version py313 ./bot

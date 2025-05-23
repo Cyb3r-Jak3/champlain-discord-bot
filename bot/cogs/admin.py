@@ -41,7 +41,9 @@ class Admin(commands.Cog, name="Admin"):
                 f"Extension {extension} not found", ephemeral=True
             )
         await self.bot.reload_extension(extension)
-        await interaction.response.send_message(f"Extension {extension} reloaded", ephemeral=True)
+        await interaction.response.send_message(
+            f"Extension {extension} reloaded", ephemeral=True
+        )
 
     # @app_commands.command(name="refresh-all", description="Refreshes both reactions and rules")
     # @app_commands.checks.has_role("Moderator")
@@ -65,27 +67,33 @@ class Admin(commands.Cog, name="Admin"):
             ctx {discord.ext.commands.Context} -- Context of the command.
         """
         uptime = datetime.utcnow() - self.bot.uptime
-        uptime_msg = (
-            ":clock1: Days: {}, Hours: {}, Minutes: {}, Seconds: {}".format(  # pylint: disable=C0209
-                uptime.days,
-                uptime.seconds // 3600,  # Hours
-                (uptime.seconds // 60) % 60,  # Minutes
-                uptime.seconds % 60,  # Seconds
-            )
+        uptime_msg = ":clock1: Days: {}, Hours: {}, Minutes: {}, Seconds: {}".format(  # pylint: disable=C0209
+            uptime.days,
+            uptime.seconds // 3600,  # Hours
+            (uptime.seconds // 60) % 60,  # Minutes
+            uptime.seconds % 60,  # Seconds
         )
 
         start_time = self.bot.uptime.strftime("%Y-%m-%d %H:%M")
         description = f"Bot has been online since {start_time} UTC"
         await interaction.response.send_message(
-            embed=Embed(title=uptime_msg, timestamp=interaction.created_at, description=description),
+            embed=Embed(
+                title=uptime_msg,
+                timestamp=interaction.created_at,
+                description=description,
+            ),
             ephemeral=True,
         )
 
     @app_commands.command(name="set-message", description="Manually set a message key")
     @app_commands.checks.has_role("Moderator")
-    async def manual_message_set(self, interaction: discord.Interaction, key: str, value: str):
+    async def manual_message_set(
+        self, interaction: discord.Interaction, key: str, value: str
+    ):
         if key not in self.bot.latest_message_ids.keys():
-            return await interaction.response.send_message(f"Key {key} is not valid", ephemeral=True)
+            return await interaction.response.send_message(
+                f"Key {key} is not valid", ephemeral=True
+            )
         await self.bot.update_last_message(key, value)
         await interaction.response.send_message(
             f"Key: `{key}` has been set to **{value}**", ephemeral=True
@@ -93,7 +101,9 @@ class Admin(commands.Cog, name="Admin"):
 
     @app_commands.command(name="get-message", description="Get a message key")
     @app_commands.checks.has_role("Moderator")
-    async def manual_message_get(self, interaction: discord.Interaction, message_key: str):
+    async def manual_message_get(
+        self, interaction: discord.Interaction, message_key: str
+    ):
         if message_key not in list(self.bot.latest_message_ids.keys()) + ["all"]:
             return await interaction.response.send_message(
                 f"Key {message_key} is not valid", ephemeral=True
@@ -104,7 +114,9 @@ class Admin(commands.Cog, name="Admin"):
                 embed.add_field(name=key, value=value, inline=False)
             return await interaction.response.send_message(embed=embed, ephemeral=True)
         value = await self.bot.get_last_message(message_key)
-        await interaction.response.send_message(f"Key: `{message_key}`: **{value}**", ephemeral=True)
+        await interaction.response.send_message(
+            f"Key: `{message_key}`: **{value}**", ephemeral=True
+        )
 
     @manual_message_get.autocomplete("message_key")
     async def manual_message_set_autocomplete(
@@ -142,10 +154,18 @@ class Admin(commands.Cog, name="Admin"):
             name=name,
             overwrites={
                 guild.default_role: PermissionOverwrite(read_messages=False),
-                student_role: PermissionOverwrite(read_messages=True, send_messages=True),
-                professor_role: PermissionOverwrite(read_messages=True, send_messages=True),
-                alumni_role: PermissionOverwrite(read_messages=True, send_messages=True),
-                new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
+                student_role: PermissionOverwrite(
+                    read_messages=True, send_messages=True
+                ),
+                professor_role: PermissionOverwrite(
+                    read_messages=True, send_messages=True
+                ),
+                alumni_role: PermissionOverwrite(
+                    read_messages=True, send_messages=True
+                ),
+                new_leadership: PermissionOverwrite(
+                    read_messages=True, send_messages=True
+                ),
                 self.bot.bot_roles[guild.id]: PermissionOverwrite(
                     read_messages=True, send_messages=True, manage_channels=True
                 ),
@@ -159,7 +179,9 @@ class Admin(commands.Cog, name="Admin"):
                 student_role: PermissionOverwrite(read_messages=False),
                 professor_role: PermissionOverwrite(read_messages=False),
                 alumni_role: PermissionOverwrite(read_messages=False),
-                new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
+                new_leadership: PermissionOverwrite(
+                    read_messages=True, send_messages=True
+                ),
             },
         )
         await guild.create_text_channel(
@@ -170,7 +192,9 @@ class Admin(commands.Cog, name="Admin"):
                 student_role: PermissionOverwrite(send_messages=False),
                 professor_role: PermissionOverwrite(send_messages=False),
                 alumni_role: PermissionOverwrite(send_messages=False),
-                new_leadership: PermissionOverwrite(read_messages=True, send_messages=True),
+                new_leadership: PermissionOverwrite(
+                    read_messages=True, send_messages=True
+                ),
             },
         )
         await guild.create_text_channel(
