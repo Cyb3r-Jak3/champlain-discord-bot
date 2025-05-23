@@ -6,7 +6,7 @@
     <option name="pathToExecutable" value="C:\Users\Jake\AppData\Roaming\Python\Python311\Scripts\black.exe" />
     <option name="sdkName" value="Python 3.11 (Champlain-Discord-Bot)" />
   </component>
-  <component name="ProjectRootManager" version="2" project-jdk-name="uv (NECCDC_Management_BOT)" project-jdk-type="Python SDK" />
+  <component name="ProjectRootManager" version="2" project-jdk-name="uv (Champlain-Discord-Bot)" project-jdk-type="Python SDK" />
   <component name="PythonCompatibilityInspectionAdvertiser">
     <option name="version" value="3" />
   </component>
