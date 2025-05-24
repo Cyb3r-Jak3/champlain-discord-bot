@@ -2,7 +2,7 @@
 
 import json
 import os
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 import sys
 
@@ -85,7 +85,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
             description=description,
             help_command=None,
         )
-        self.uptime = datetime.utcnow()
+        self.uptime = datetime.now(timezone.utc)
         self.latest_message_ids = total_ids()
         self.log = log
         self.guild_info: dict = {}
