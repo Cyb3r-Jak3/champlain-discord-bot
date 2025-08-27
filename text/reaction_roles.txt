@@ -7,5 +7,5 @@
 :six: for Math Club
 :seven: for DevOpsClub
 :eight: for WiCyS
-:nine: for CIS
+:nine: for CSIC
 -# **Note:** The bot doesn't save if you already have a role and will remove the role if you react and already have it
