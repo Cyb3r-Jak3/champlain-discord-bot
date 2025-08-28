@@ -15,7 +15,7 @@ class GraduationCog(commands.Cog, name="Graduation"):
     """Cog that deals with graduation message"""
 
     def __init__(self, bot):
-        self.bot: "Discord_Bot" = bot
+        self.bot: Discord_Bot = bot
 
     @app_commands.command(
         name="set-graduation", description="Sets the graduation message"

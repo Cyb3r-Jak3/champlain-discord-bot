@@ -2,7 +2,7 @@
 
 import json
 import os
-from datetime import datetime, timezone
+from datetime import datetime, UTC
 from typing import Optional
 import sys
 
@@ -53,12 +53,12 @@ def _set_last_message_id(key: str, message: int) -> None:
     Parameters
     ----------
     message The message id of the key
-
     """
     if key not in total_ids():
-        return None
+        return
     with open(f"{data_directory}/{key}", "w+", encoding="utf-8") as outfile:
         outfile.write(str(message))
+    return
 
 
 def _get_message_id(key: str) -> Optional[int]:
@@ -69,7 +69,7 @@ def _get_message_id(key: str) -> Optional[int]:
     int - ID of the last role_reaction_message
     """
     if key not in ["last_reaction", "last_rules", "last_started", "last_graduation"]:
-        return
+        return None
     try:
         with open(f"{data_directory}/{key}", "r", encoding="utf-8") as infile:
             return int(infile.read())
@@ -85,7 +85,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
             description=description,
             help_command=None,
         )
-        self.uptime = datetime.now(timezone.utc)
+        self.uptime = datetime.now(UTC)
         self.latest_message_ids = total_ids()
         self.log = log
         self.guild_info: dict = {}

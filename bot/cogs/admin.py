@@ -1,6 +1,6 @@
 """Cogs for admin features"""
 
-from datetime import datetime
+from datetime import datetime, UTC
 from typing import List, TYPE_CHECKING
 import discord
 from discord.ext import commands
@@ -17,7 +17,7 @@ class Admin(commands.Cog, name="Admin"):
     """Cogs for admin commands"""
 
     def __init__(self, bot: "Discord_Bot"):
-        self.bot: "Discord_Bot" = bot
+        self.bot: Discord_Bot = bot
 
     @app_commands.command(name="reload-extension", description="reloads <extension>")
     @app_commands.checks.has_role("Moderator")
@@ -66,7 +66,7 @@ class Admin(commands.Cog, name="Admin"):
         ---
             ctx {discord.ext.commands.Context} -- Context of the command.
         """
-        uptime = datetime.utcnow() - self.bot.uptime
+        uptime = datetime.now(UTC) - self.bot.uptime
         uptime_msg = ":clock1: Days: {}, Hours: {}, Minutes: {}, Seconds: {}".format(  # pylint: disable=C0209
             uptime.days,
             uptime.seconds // 3600,  # Hours

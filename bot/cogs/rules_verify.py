@@ -22,7 +22,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
     """Cogs for rules verifying"""
 
     def __init__(self, bot):
-        self.bot: "Discord_Bot" = bot
+        self.bot: Discord_Bot = bot
 
     @commands.Cog.listener()
     async def on_member_join(self, member: discord.Member):
@@ -75,7 +75,7 @@ class RulesVerify(commands.Cog, name="Rules_Verify"):
         ) as err:
             self.bot.log.error(err)
 
-        guild_info = self.bot.base_guild_info[interaction.guild.id]
+        guild_info = self.bot.guild_info[interaction.guild.id]
         rules, getting_started = load_files()
         new_message = await rules_channel.send(
             rules.format(
