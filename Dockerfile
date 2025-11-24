@@ -1,4 +1,4 @@
-FROM ghcr.io/astral-sh/uv:0.8.17-python3.13-alpine@sha256:dd6d60071c0c00478ed604fff901609bdefb31d582ee33029379c2eb5d7191f7
+FROM ghcr.io/astral-sh/uv:0.9.11-python3.13-alpine@sha256:d36977acd765d139afda077d70d0e6c2e8c18c4d1f4f91dc2f79b14fce172a98
 
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 
