@@ -8,4 +8,5 @@
 :seven: for DevOpsClub
 :eight: for WiCyS
 :nine: for CSIC
+:keycap_ten: for Scam Busters
 -# **Note:** The bot doesn't save if you already have a role and will remove the role if you react and already have it
