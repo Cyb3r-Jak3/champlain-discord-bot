@@ -91,7 +91,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
         self.guild_info: dict = {}
         self.bot_roles: dict[int, discord.Role] = {}
 
-    def load_guild_info(self, guild: discord.Guild):
+    def load_guild_info(self, guild: discord.Guild) -> dict:
         """Loads the guild info from the base_guild_info file
         and updates it with the guild's info."""
         new_copy = base_guild_info.copy()
@@ -120,6 +120,7 @@ class Discord_Bot(commands.Bot):  # pylint: disable=missing-class-docstring
                     err,
                 )
         self.guild_info[guild.id] = new_copy
+        return new_copy
 
     def load_channel(self, guild: int, name: str) -> discord.TextChannel:
         """Loads the channel from the guild info"""
