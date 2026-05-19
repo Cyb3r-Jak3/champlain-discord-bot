@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 import cyberjake
 import discord
 from discord.ext import commands
-from discord.utils import get
 from discord import RawReactionActionEvent, app_commands
 
 if TYPE_CHECKING:
@@ -40,20 +39,27 @@ class GraduationCog(commands.Cog, name="Graduation"):
             f"Graduation message set to {msg.jump_url}", ephemeral=True
         )
 
-    @app_commands.command(name="send-graduation", description="Sends a graduation message")
+    @app_commands.command(
+        name="send-graduation", description="Sends a graduation message"
+    )
     @app_commands.checks.has_role("Moderator")
     async def send_graduation_message(self, interaction: discord.Interaction):
         """Sends the graduation message"""
 
         with open("text/graduation.txt", encoding="utf-8") as infile:
             message_text = infile.read()
-        student_role = interaction.guild.get_role(self.bot.guild_info[interaction.guild_id]["roles"]["student"])
-        new_message = await interaction.channel.send(message_text.format(student_role=student_role.mention), allowed_mentions=discord.AllowedMentions(roles=[student_role]))
+        student_role = interaction.guild.get_role(
+            self.bot.guild_info[interaction.guild_id]["roles"]["student"]
+        )
+        new_message = await interaction.channel.send(
+            message_text.format(student_role=student_role.mention),
+            allowed_mentions=discord.AllowedMentions(roles=[student_role]),
+        )
         await new_message.add_reaction("🥳")
         await self.bot.update_last_message("last_graduation", new_message.id)
         await interaction.response.send_message(
             f"Graduation message sent to {new_message.jump_url}", ephemeral=True
-                                                                        )
+        )
 
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload: RawReactionActionEvent):
