@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING
 import cyberjake
 import discord
 from discord.ext import commands
-from discord.utils import get
 from discord import RawReactionActionEvent, app_commands
 
 if TYPE_CHECKING:
